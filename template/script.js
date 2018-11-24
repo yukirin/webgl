@@ -4,7 +4,7 @@ var q = new qtnIV();
 
 onload = function () {
 	this.setTimeout(renderWebGL, 300);
-}
+};
 
 function renderWebGL() {
 	var c = document.getElementById('canvas');
