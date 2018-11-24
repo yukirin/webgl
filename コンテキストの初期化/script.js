@@ -4,7 +4,7 @@ var q = new qtnIV();
 
 onload = function () {
 	this.setTimeout(renderWebGL, 300);
-}
+};
 
 function renderWebGL() {
 	var c = document.getElementById('canvas');
@@ -13,8 +13,6 @@ function renderWebGL() {
 
 	gl = c.getContext('webgl') || c.getContext('experimental-webgl');
 
-	var v_shader = create_shader('vertex.glsl', 'x-vertex');
-	var f_shader = create_shader('fragment.glsl', 'x-fragment');
-
-	var prg = create_program(v_shader, f_shader);
+	gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	gl.clear(gl.COLOR_BUFFER_BIT);
 }
