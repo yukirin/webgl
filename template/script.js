@@ -3,7 +3,7 @@ var m = new matIV();
 var q = new qtnIV();
 
 onload = function () {
-	this.setTimeout(renderWebGL, 500);
+	this.setTimeout(renderWebGL, 300);
 }
 
 function renderWebGL() {
