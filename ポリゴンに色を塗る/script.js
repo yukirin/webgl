@@ -40,7 +40,10 @@ function renderWebGL() {
 		0.0, 0.0, 1.0, 1.0
 	]
 
-	linkAttribute([vertex_position, vertex_color], attLocation, attStride);
+	var pos_vbo = create_vbo(vertex_position);
+	var color_vbo = create_vbo(vertex_color);
+
+	linkAttribute([pos_vbo, color_vbo], attLocation, attStride);
 
 	var mMatrix = m.identity(m.create());
 	var mvpMatrix = getMvpMatrix(mMatrix, [0.0, 1.0, 3.0], [0, 0, 0], [0, 1, 0],
