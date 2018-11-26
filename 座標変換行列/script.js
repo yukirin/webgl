@@ -25,4 +25,12 @@ function renderWebGL() {
 	];
 
 	var position_vbo = create_vbo(vertex_position);
+
+	var mMatrix = m.identity(m.create());
+	var vMatrix = m.identity(m.create());
+	var pMatrix = m.identity(m.create());
+	var mvpMatrix = m.identity(m.create());
+
+	m.multiply(pMatrix, vMatrix, mvpMatrix);
+	m.multiply(mvpMatrix, mMatrix, mvpMatrix);
 }
