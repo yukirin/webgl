@@ -13,9 +13,7 @@ function renderWebGL() {
 
 	gl = c.getContext('webgl') || c.getContext('experimental-webgl');
 
-	gl.clearColor(0.0, 0.0, 0.0, 1.0);
-	gl.clearDepth(1.0);
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	clearBuffer([0.0, 0.0, 0.0, 1.0], 1.0);
 
 	var v_shader = create_shader('vertex.glsl', 'x-vertex');
 	var f_shader = create_shader('fragment.glsl', 'x-fragment');
@@ -38,15 +36,8 @@ function renderWebGL() {
 	gl.vertexAttribPointer(attLocation, attStride, gl.FLOAT, false, 0, 0);
 
 	var mMatrix = m.identity(m.create());
-	var vMatrix = m.identity(m.create());
-	var pMatrix = m.identity(m.create());
-	var mvpMatrix = m.identity(m.create());
-
-	m.lookAt([0.0, 1.0, 3.0], [0, 0, 0], [0, 1, 0], vMatrix);
-	m.perspective(90, c.width / c.height, 0.1, 100, pMatrix);
-
-	m.multiply(pMatrix, vMatrix, mvpMatrix);
-	m.multiply(mvpMatrix, mMatrix, mvpMatrix);
+	var mvpMatrix = getMvpMatrix(mMatrix, [0.0, 1.0, 3.0], [0, 0, 0], [0, 1, 0],
+		90, c.width / c.height, 0.1, 100);
 
 	var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
 	gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
