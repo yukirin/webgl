@@ -12,9 +12,7 @@ function renderWebGL() {
 	c.height = 300;
 
 	gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+	clearBuffer([0.0, 0.0, 0.0, 1.0], 1.0);
 
-	var v_shader = create_shader('vertex.glsl', 'x-vertex');
-	var f_shader = create_shader('fragment.glsl', 'x-fragment');
-
-	var prg = create_program(v_shader, f_shader);
+	var prg = create_program('vertex.glsl', 'x-vertex', 'fragment.glsl', 'x-fragment');
 }
