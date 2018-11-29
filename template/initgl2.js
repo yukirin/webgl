@@ -27,6 +27,15 @@ function create_shader(fileName, fileType) {
     return shader;
 }
 
+function initialMatrix(num) {
+    var matrixes = [];
+
+    for (var i = 0; i < num; i++) {
+        matrixes.push(m.identity(m.create()));
+    }
+    return matrixes;
+}
+
 function clearBuffer(clearColor, clearDepth) {
     gl.clearColor(...clearColor);
     gl.clearDepth(clearDepth);
