@@ -84,6 +84,16 @@ function create_vbo(data) {
     return vbo;
 }
 
+function setAttribute(vbos, attLName, attS, prg) {
+    for (var i in vbos) {
+        var attLocation = gl.getAttribLocation(prg, attLName[i]);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbos[i]);
+        gl.enableVertexAttribArray(attLocation);
+        gl.vertexAttribPointer(attLocation, attS[i], gl.FLOAT, false, 0, 0);
+    }
+}
+
 function linkAttribute(datanum, attLName, attS, prg) {
     for (var i in datanum) {
         var vbo = create_vbo(datanum[i]);
