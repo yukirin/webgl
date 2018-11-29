@@ -8,8 +8,8 @@ onload = function () {
 
 function renderWebGL() {
 	var c = document.getElementById('canvas');
-	c.width = 500;
-	c.height = 300;
+	c.width = 1000;
+	c.height = 600;
 
 	gl = c.getContext('webgl') || c.getContext('experimental-webgl');
 	var prg = create_program('vertex.glsl', 'x-vertex', 'fragment.glsl', 'x-fragment');
