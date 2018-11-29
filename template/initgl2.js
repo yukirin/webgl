@@ -86,6 +86,23 @@ function linkAttribute(datanum, attLName, attS, prg) {
     }
 }
 
+function linkUniform(datanum, uniformNames, uniformTypes, prg) {
+    for (var i in datanum) {
+        var loc = gl.getUniformLocation(prg, uniformNames[i]);
+
+        switch (uniformTypes[i]) {
+            case 'm4':
+                gl.uniformMatrix4fv(loc, false, datanum[i]);
+                break;
+            case 'v3':
+                gl.uniform3fv(loc, datanum[i]);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 function create_ibo(data) {
     var ibo = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
