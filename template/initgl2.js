@@ -122,6 +122,9 @@ function linkUniform(datanum, uniformNames, uniformTypes, prg) {
             case 'i1':
                 gl.uniform1i(loc, datanum[i]);
                 break;
+            case 'f1':
+                gl.uniform1f(loc, datanum[i]);
+                break;
             default:
                 break;
         }
