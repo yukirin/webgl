@@ -27,81 +27,59 @@ function renderWebGL() {
 	];
 
 	var color = [
-		1.0, 1.0, 1.0, 1.0,
-		1.0, 1.0, 1.0, 1.0,
-		1.0, 1.0, 1.0, 1.0,
+		1.0, 0.0, 0.0, 1.0,
+		0.0, 1.0, 0.0, 1.0,
+		0.0, 0.0, 1.0, 1.0,
 		1.0, 1.0, 1.0, 1.0
 	];
 
-	var textureCoord = [
-		0.0, 0.0,
-		1.0, 0.0,
-		0.0, 1.0,
-		1.0, 1.0
-	];
-
-	var index = [
-		2, 1, 0,
-		2, 3, 1
-	]
-
-	linkAttribute([position, color, textureCoord], ['position', 'color', 'textureCoord'], [3, 4, 2], prg);
-	var ibo = create_ibo(index);
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+	var { p: sp_pos, c: sp_color } = sphere(16, 16, 2.0);
 
 	var [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invMatrix] = initialMatrix(6);
 
+	var pointSize = 8.0;
 	var camPosition = [0.0, 5.0, 10.0];
 	var camUpDirection = [0.0, 1.0, 0.0];
-
-	create_texture('texture0.png', 0);
-	create_texture('texture1.png', 1);
+	var count = 0;
 
 	gl.depthFunc(gl.LEQUAL);
 	gl.enable(gl.DEPTH_TEST);
 	gl.frontFace(gl.CCW);
-	// gl.enable(gl.CULL_FACE);
+	gl.enable(gl.CULL_FACE);
 
 	gl.enable(gl.BLEND);
 	gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
 
 	(function () {
 		clearBuffer([0.0, 0.0, 0.0, 1.0], 1.0);
+		count++;
 
+		var rad = (count % 360) * Math.PI / 180;
 		var qMatrix = m.identity(m.create());
 		q.toMatIV(qt, qMatrix);
 
 		m.lookAt(camPosition, [0, 0, 0], camUpDirection, vMatrix);
-		m.lookAt(camUpDirection, camPosition, [0, 1, 0], invMatrix);
 		m.multiply(vMatrix, qMatrix, vMatrix);
-		m.multiply(invMatrix, qMatrix, invMatrix);
-		m.inverse(invMatrix, invMatrix);
-
 		m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
 		m.multiply(pMatrix, vMatrix, tmpMatrix);
 
-		gl.activeTexture(gl.TEXTURE1);
-		gl.bindTexture(gl.TEXTURE_2D, texture1);
+		linkAttribute([sp_pos, sp_color], ['position', 'color'], [3, 4], prg);
+		m.identity(mMatrix);
+		m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
+		m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+		linkUniform([mvpMatrix, pointSize], ['mvpMatrix', 'pointSize'], ['m4', 'f1'], prg);
+		gl.drawArrays(gl.POINTS, 0, sp_pos.length / 3);
 
+
+		linkAttribute([position, color], ['position', 'color'], [3, 4], prg);
 		m.identity(mMatrix);
 		m.rotate(mMatrix, Math.PI / 2, [1, 0, 0], mMatrix);
 		m.scale(mMatrix, [3.0, 3.0, 1.0], mMatrix);
 		m.multiply(tmpMatrix, mMatrix, mvpMatrix);
-		linkUniform([mvpMatrix, 1], ['mvpMatrix', 'texture'], ['m4', 'i1'], prg);
-		gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
-
-		gl.activeTexture(gl.TEXTURE0);
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-
-		m.identity(mMatrix);
-		m.translate(mMatrix, [0.0, 1.0, 0.0], mMatrix);
-		m.multiply(mMatrix, invMatrix, mMatrix);
-		m.multiply(tmpMatrix, mMatrix, mvpMatrix);
-		linkUniform([mvpMatrix, 0], ['mvpMatrix', 'texture'], ['m4', 'i1'], prg);
-		gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
+		linkUniform([mvpMatrix, pointSize], ['mvpMatrix', 'pointSize'], ['m4', 'f1'], prg);
+		gl.drawArrays(gl.LINE_LOOP, 0, position.length / 3);
 
 		gl.flush();
-
 		setTimeout(arguments.callee, 1000 / 30);
 	})();
 }
