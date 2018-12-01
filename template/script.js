@@ -1,3 +1,4 @@
+var c;
 var gl;
 var m = new matIV();
 var q = new qtnIV();
@@ -7,7 +8,7 @@ onload = function () {
 };
 
 function renderWebGL() {
-	var c = document.getElementById('canvas');
+	c = document.getElementById('canvas');
 	c.width = 500;
 	c.height = 300;
 
