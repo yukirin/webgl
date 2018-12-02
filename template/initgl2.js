@@ -36,10 +36,11 @@ function initialMatrix(num) {
     return matrixes;
 }
 
-function clearBuffer(clearColor, clearDepth) {
+function clearBuffer(clearColor, clearDepth, clearStencil) {
     gl.clearColor(...clearColor);
     gl.clearDepth(clearDepth);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.clearStencil(clearStencil);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 }
 
 function getMvpMatrix(mMatrix, eye, center, up, fovy, aspect, near, far) {
