@@ -95,7 +95,6 @@ function renderWebGL() {
 		m.multiply(pMatrix, vMatrix, tmpMatrix);
 		m.inverse(qMatrix, invMatrix);
 
-
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, texture);
 
