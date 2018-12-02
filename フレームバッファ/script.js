@@ -82,7 +82,7 @@ function renderWebGL() {
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.viewport(0, 0, c.width, c.height);
 
-		clearBuffer([0, 0.7, 0.7, 1], 1.0, 0);
+		clearBuffer([0.0, 0.7, 0.7, 1], 1.0, 0);
 		linkAttribute([cubeData.p, cubeData.c, cubeData.n, cubeData.t], ['position', 'color', 'normal', 'textureCoord'], [3, 4, 3, 2], prg);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cIndex);
 		gl.bindTexture(gl.TEXTURE_2D, fBuffer.t);
