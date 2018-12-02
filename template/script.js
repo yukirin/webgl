@@ -12,7 +12,7 @@ function renderWebGL() {
 	c.width = 500;
 	c.height = 300;
 
-	gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+	gl = c.getContext('webgl', { stencil: true }) || c.getContext('experimental-webgl', { stencil: true });
 	clearBuffer([0.0, 0.0, 0.0, 1.0], 1.0);
 
 	var prg = create_program('vertex.glsl', 'x-vertex', 'fragment.glsl', 'x-fragment');
