@@ -1,7 +1,7 @@
 var c, gl;
 var m = new matIV();
 var q = new qtnIV();
-var texture = null, texture1 = null;
+var textures = [null, null, null, null, null, null, null, null, null, null];
 var qt = q.identity(q.create());
 
 onload = function () {
@@ -84,7 +84,7 @@ function renderWebGL() {
 		linkAttribute([position, color], ['position', 'color'], [3, 4], prg);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vIndex);
 		setVPMatrix([0, 0, 5], [0, 0, 0], [0, 1, 0], 45, c.width, c.height, 0.1, 100, false);
-		render([1, 1, 1], 0, [1, 1, 0], [0, 0, 0], [texture], index.length, [mvpMatrix, 0], ['mvpMatrix', 'texture'], ['m4', 'i1'], prg);
+		render([1, 1, 1], 0, [1, 1, 0], [0, 0, 0], textures.slice(0, 1), index.length, [mvpMatrix, 0], ['mvpMatrix', 'texture'], ['m4', 'i1'], prg);
 
 		gl.flush();
 		setTimeout(arguments.callee, 1000 / 30);

@@ -151,16 +151,7 @@ function create_texture(source, number) {
         gl.generateMipmap(gl.TEXTURE_2D);
         gl.bindTexture(gl.TEXTURE_2D, null);
 
-        switch (number) {
-            case 0:
-                texture = tex;
-                break;
-            case 1:
-                texture1 = tex;
-                break;
-            default:
-                break;
-        }
+        textures[number] = tex;
     };
 
     img.src = source;
@@ -224,7 +215,10 @@ function create_framebuffer(width, height) {
 }
 
 function bind_texture(textures) {
-    units = [gl.TEXTURE0, gl.TEXTURE1, gl.TEXTURE2, gl.TEXTURE3, gl.TEXTURE4];
+    units = [
+        gl.TEXTURE0, gl.TEXTURE1, gl.TEXTURE2, gl.TEXTURE3, gl.TEXTURE4,
+        gl.TEXTURE5, gl.TEXTURE6, gl.TEXTURE7, gl.TEXTURE8, gl.TEXTURE9
+    ];
 
     for (var i in textures) {
         gl.activeTexture(units[i]);
