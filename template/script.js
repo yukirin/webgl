@@ -1,7 +1,7 @@
 var c, gl;
 var m = new matIV();
 var q = new qtnIV();
-var textures = [null, null, null, null, null, null, null, null, null, null];
+var textures = [];
 var qt = q.identity(q.create());
 
 onload = function () {
