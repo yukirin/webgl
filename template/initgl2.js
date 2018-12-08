@@ -222,3 +222,12 @@ function create_framebuffer(width, height) {
 
     return { f: frameBuffer, d: depthRenderBuffer, t: fTexture };
 }
+
+function bind_texture(textures) {
+    units = [gl.TEXTURE0, gl.TEXTURE1, gl.TEXTURE2, gl.TEXTURE3, gl.TEXTURE4];
+
+    for (var i in textures) {
+        gl.activeTexture(units[i]);
+        gl.bindTexture(gl.TEXTURE_2D, textures[i]);
+    }
+}

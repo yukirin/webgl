@@ -44,7 +44,6 @@ function renderWebGL() {
 	var count = 0;
 
 	create_texture('texture0.png', 0);
-	gl.activeTexture(gl.TEXTURE0);
 
 	gl.depthFunc(gl.LEQUAL);
 	gl.enable(gl.DEPTH_TEST);
@@ -54,8 +53,8 @@ function renderWebGL() {
 	gl.enable(gl.BLEND);
 	gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
 
-	function render(scale, rad, axis, translate, texture, indexSize, linkValues, linkNames, linkTypes, prg) {
-		gl.bindTexture(gl.TEXTURE_2D, texture);
+	function render(scale, rad, axis, translate, textures, indexSize, linkValues, linkNames, linkTypes, prg) {
+		bind_texture(textures);
 		m.identity(mMatrix);
 		m.translate(mMatrix, translate, mMatrix);
 		m.rotate(mMatrix, rad, axis, mMatrix);
@@ -85,7 +84,7 @@ function renderWebGL() {
 		linkAttribute([position, color], ['position', 'color'], [3, 4], prg);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vIndex);
 		setVPMatrix([0, 0, 5], [0, 0, 0], [0, 1, 0], 45, c.width, c.height, 0.1, 100, false);
-		render([1, 1, 1], 0, [1, 1, 0], [0, 0, 0], texture, index.length, [mvpMatrix, 0], ['mvpMatrix', 'texture'], ['m4', 'i1'], prg);
+		render([1, 1, 1], 0, [1, 1, 0], [0, 0, 0], [texture], index.length, [mvpMatrix, 0], ['mvpMatrix', 'texture'], ['m4', 'i1'], prg);
 
 		gl.flush();
 		setTimeout(arguments.callee, 1000 / 30);
