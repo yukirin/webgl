@@ -225,3 +225,51 @@ function bind_texture(textures) {
         gl.bindTexture(gl.TEXTURE_2D, textures[i]);
     }
 }
+
+function create_cube_texture(source, target) {
+    var cImg = new Array();
+
+    for (var i = 0; i < source.length; i++) {
+        cImg[i] = new cubeMapImage();
+        cImg[i].data.src = source[i];
+    }
+
+    function cubeMapImage() {
+        this.data = new Image();
+
+        this.data.onload = function () {
+            this.imageDataLoaded = true;
+            checkLoaded();
+        };
+    }
+
+    function checkLoaded() {
+        if (cImg[0].data.imageDataLoaded &&
+            cImg[1].data.imageDataLoaded &&
+            cImg[2].data.imageDataLoaded &&
+            cImg[3].data.imageDataLoaded &&
+            cImg[4].data.imageDataLoaded &&
+            cImg[5].data.imageDataLoaded) {
+            generateCubeMap();
+        }
+    }
+
+    function generateCubeMap() {
+        var tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, tex);
+
+        for (var j = 0; j < source.length; j++) {
+            gl.texImage2D(target[j], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cImg[j].data);
+        }
+
+        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        cubeTexture = tex;
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+    }
+}

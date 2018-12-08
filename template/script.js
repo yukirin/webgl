@@ -2,6 +2,7 @@ var c, gl;
 var m = new matIV();
 var q = new qtnIV();
 var textures = [];
+var cubeTexture = null;
 var qt = q.identity(q.create());
 
 onload = function () {
