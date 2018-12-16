@@ -38,7 +38,7 @@ function renderWebGL() {
 	];
 	var vIndex = create_ibo(index);
 
-	var [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invMatrix] = initialMatrix(6);
+	var [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invMatrix, invTMatrix] = initialMatrix(7);
 	var camPosition = [0.0, 0.0, 10.0];
 	var camUpDirection = [0.0, 1.0, 0.0];
 	var lightDirection = [1, 1, 1];
@@ -54,7 +54,7 @@ function renderWebGL() {
 	gl.enable(gl.BLEND);
 	gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
 
-	function render(scale, rad, axis, translate, textures, indexSize, linkValues, linkNames, linkTypes, prg) {
+	function render(scale, rad, axis, translate, textures, indexSize, ibo, linkValues, linkNames, linkTypes, prg) {
 		bind_texture(textures);
 		m.identity(mMatrix);
 		m.translate(mMatrix, translate, mMatrix);
@@ -62,7 +62,9 @@ function renderWebGL() {
 		m.scale(mMatrix, scale, mMatrix);
 		m.multiply(tmpMatrix, mMatrix, mvpMatrix);
 		m.inverse(mMatrix, invMatrix);
+		m.transpose(invMatrix, invTMatrix);
 		linkUniform(linkValues, linkNames, linkTypes, prg);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 		gl.drawElements(gl.TRIANGLES, indexSize, gl.UNSIGNED_SHORT, 0);
 	}
 
@@ -85,7 +87,8 @@ function renderWebGL() {
 		linkAttribute([position, color], ['position', 'color'], [3, 4], prg);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vIndex);
 		setVPMatrix([0, 0, 5], [0, 0, 0], [0, 1, 0], 45, c.width, c.height, 0.1, 100, false);
-		render([1, 1, 1], 0, [1, 1, 0], [0, 0, 0], textures.slice(0, 1), index.length, [mvpMatrix, 0], ['mvpMatrix', 'texture'], ['m4', 'i1'], prg);
+		render([1, 1, 1], 0, [1, 1, 0], [0, 0, 0], textures.slice(0, 1), index.length, vIndex,
+			[mvpMatrix, 0], ['mvpMatrix', 'texture'], ['m4', 'i1'], prg);
 
 		gl.flush();
 		setTimeout(arguments.callee, 1000 / 30);
