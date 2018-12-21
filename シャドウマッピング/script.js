@@ -36,10 +36,10 @@ function renderWebGL() {
 		0.0, 1.0, 0.0
 	];
 	var color = [
-		0.5, 0.5, 0.5, 1.0,
-		0.5, 0.5, 0.5, 1.0,
-		0.5, 0.5, 0.5, 1.0,
-		0.5, 0.5, 0.5, 1.0
+		0.9, 0.9, 0.9, 1.0,
+		0.9, 0.9, 0.9, 1.0,
+		0.9, 0.9, 0.9, 1.0,
+		0.9, 0.9, 0.9, 1.0
 	];
 	var index = [
 		0, 2, 1,
@@ -47,11 +47,12 @@ function renderWebGL() {
 	];
 	var cIndex = create_ibo(index);
 
-	var [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invTMatrix, invMatrix, tMatrix, dvMatrix, dpMatrix, dvpMatrix, lgtMatrix] = initialMatrix(12);
+	var [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invTMatrix, invMatrix, tMatrix, dvMatrix, dpMatrix, dvpMatrix] = initialMatrix(11);
 	var lightPosition = [0.0, 30.0, 0.0];
-	var camPosition = [0, 80, 50.0];
+	var camPosition = [0, 70, 50.0];
 	var camUpDirection = [0, 1, 0];
 	var count = 0;
+	var depthMethod = true;
 
 	tMatrix[0] = 0.5; tMatrix[1] = 0.0; tMatrix[2] = 0.0; tMatrix[3] = 0.0;
 	tMatrix[4] = 0.0; tMatrix[5] = 0.5; tMatrix[6] = 0.0; tMatrix[7] = 0.0;
@@ -61,25 +62,26 @@ function renderWebGL() {
 	gl.depthFunc(gl.LEQUAL);
 	gl.enable(gl.DEPTH_TEST);
 	gl.frontFace(gl.CCW);
-	// gl.enable(gl.CULL_FACE);
+	gl.enable(gl.CULL_FACE);
 	// gl.enable(gl.STENCIL_TEST);
 	// gl.enable(gl.BLEND);
 	// gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
 
 	function render(scale, rad, axis, translate, textures, indexSize, ibo, linkValues, linkNames, linkTypes, prg) {
 		bind_texture(textures);
+
 		m.identity(mMatrix);
 		m.translate(mMatrix, translate, mMatrix);
 		m.rotate(mMatrix, rad, axis, mMatrix);
 		m.scale(mMatrix, scale, mMatrix);
+
 		m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+
 		m.inverse(mMatrix, invMatrix);
-
-		// add shadow mapping
-		m.multiply(dvpMatrix, mMatrix, lgtMatrix);
-
 		m.transpose(invMatrix, invTMatrix);
+
 		linkUniform(linkValues, linkNames, linkTypes, prg);
+
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 		gl.drawElements(gl.TRIANGLES, indexSize, gl.UNSIGNED_SHORT, 0);
 	}
@@ -94,62 +96,58 @@ function renderWebGL() {
 		m.multiply(pMatrix, vMatrix, tmpMatrix);
 	}
 
+	setVPMatrix(camPosition, [0, 0, 0], camUpDirection, 45, c.width, c.height, 0.1, 150);
+	m.lookAt(lightPosition, [0, 0, 0], [0, 0, -1], dvMatrix);
+	m.perspective(90, 1.0, 0.1, 150, dpMatrix);
+	m.multiply(tMatrix, dpMatrix, dvpMatrix);
+	m.multiply(dvpMatrix, dvMatrix, tMatrix);
+	m.multiply(dpMatrix, dvMatrix, dvpMatrix);
+
 	(function () {
 		count++;
 		var rad = (count % 180) * Math.PI / 90;
 
-		// gl.bindFramebuffer(gl.FRAMEBUFFER, fBuffer.f);
-		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-		clearBuffer([0.0, 0.7, 0.7, 1.0], 1.0, 0);
-		setVPMatrix(camPosition, [0, 0, 0], camUpDirection, 45, c.width, c.height, 0.1, 150);
-
-		m.lookAt(lightPosition, [0, 0, 0], [0, 0, -1], dvMatrix);
-		m.perspective(90, 1.0, 0.1, 150, dpMatrix);
-		m.multiply(tMatrix, dpMatrix, dvpMatrix);
-		m.multiply(dvpMatrix, dvMatrix, tMatrix);
-
-		m.multiply(dpMatrix, dvMatrix, dvpMatrix);
-
 		gl.useProgram(depthPrg);
-		linkAttribute([torusData.p], ['position'], [3, 4, 3], depthPrg);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, fBuffer.f);
+		clearBuffer([1.0, 1.0, 1.0, 1.0], 1.0, 0);
+
+		linkAttribute([torusData.p], ['position'], [3], depthPrg);
 		for (var i = 0; i < 10; i++) {
 			var transPos = [0, 0, 10 + Math.floor(i / 5) * -4];
 			q.rotate((72.0 * i * Math.PI) / 180, [0, 1, 0], qt);
 			q.toVecIII(transPos, qt, transPos);
-
-			transPos[1] += (5 * Math.floor(i / 5));
+			transPos[1] += (3 * Math.floor(i / 5) + 5);
 			render([1, 1, 1], rad, [1, 1, 1], transPos, [], torusData.i.length, trIndex,
-				[lgtMatrix, true],
-				['mvpMatrix', 'depthBuffer'], ['m4', 'i1'], depthPrg);
+				[dvpMatrix, depthMethod, mMatrix],
+				['dvpMatrix', 'depthBuffer', 'mMatrix'], ['m4', 'i1', 'm4'], depthPrg);
 		}
 
-		linkAttribute([position], ['position'], [3, 4, 3], depthPrg);
-		render([40, 0.1, 40], 0, [1, 1, 1], [0, -120, 0], [], index.length, cIndex,
-			[lgtMatrix, true],
-			['mvpMatrix', 'depthBuffer'], ['m4', 'i1'], depthPrg);
+		linkAttribute([position], ['position'], [3], depthPrg);
+		render([40, 1, 40], 0, [1, 1, 1], [0, -10, 0], [], index.length, cIndex,
+			[dvpMatrix, depthMethod, mMatrix],
+			['dvpMatrix', 'depthBuffer', 'mMatrix'], ['m4', 'i1', 'm4'], depthPrg);
 
-		// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-		// clearBuffer([0.0, 0.7, 0.7, 1.0], 1.0, 0);
-		// gl.useProgram(prg);
+		gl.useProgram(prg);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		clearBuffer([0.0, 0.7, 0.7, 1.0], 1.0, 0);
 
-		// linkAttribute([torusData.p, torusData.c, torusData.n], ['position', 'color', 'normal'], [3, 4, 3], prg);
-		// for (var i = 0; i < 10; i++) {
-		// 	var transPos = [0, 0, 10 + Math.floor(i / 5) * -4];
-		// 	q.rotate((72.0 * i * Math.PI) / 180, [0, 1, 0], qt);
-		// 	q.toVecIII(transPos, qt, transPos);
+		linkAttribute([torusData.p, torusData.c, torusData.n], ['position', 'color', 'normal'], [3, 4, 3], prg);
+		for (var i = 0; i < 10; i++) {
+			var transPos = [0, 0, 10 + Math.floor(i / 5) * -4];
+			q.rotate((72.0 * i * Math.PI) / 180, [0, 1, 0], qt);
+			q.toVecIII(transPos, qt, transPos);
+			transPos[1] += (3 * Math.floor(i / 5) + 5);
+			render([1, 1, 1], rad, [1, 1, 1], transPos, [fBuffer.t], torusData.i.length, trIndex,
+				[mMatrix, mvpMatrix, tMatrix, dvpMatrix, invTMatrix, lightPosition, 0, depthMethod],
+				['mMatrix', 'mvpMatrix', 'tMatrix', 'dvpMatrix', 'invTMatrix', 'lightPosition', 'texture', 'depthBuffer'],
+				['m4', 'm4', 'm4', 'm4', 'm4', 'v3', 'i1', 'i1'], prg);
+		}
 
-		// 	transPos[1] += (5 * Math.floor(i / 5));
-		// 	render([1, 1, 1], rad, [1, 1, 1], transPos, [fBuffer.t], torusData.i.length, trIndex,
-		// 		[mMatrix, mvpMatrix, tMatrix, lgtMatrix, invTMatrix, lightPosition, 0, true],
-		// 		['mMatrix', 'mvpMatrix', 'tMatrix', 'lgtMatrix', 'invTMatrix', 'lightPosition', 'texture', 'depthBuffer'],
-		// 		['m4', 'm4', 'm4', 'm4', 'm4', 'v3', 'i1', 'i1'], prg);
-		// }
-
-		// linkAttribute([position, color, normal], ['position', 'color', 'normal'], [3, 4, 3], prg);
-		// render([40, 0.1, 40], 0, [1, 1, 1], [0, -20, 0], [fBuffer.t], index.length, cIndex,
-		// 	[mMatrix, mvpMatrix, tMatrix, lgtMatrix, invTMatrix, lightPosition, 0, true],
-		// 	['mMatrix', 'mvpMatrix', 'tMatrix', 'lgtMatrix', 'invTMatrix', 'lightPosition', 'texture', 'depthBuffer'],
-		// 	['m4', 'm4', 'm4', 'm4', 'm4', 'v3', 'i1', 'i1'], prg);
+		linkAttribute([position, color, normal], ['position', 'color', 'normal'], [3, 4, 3], prg);
+		render([40, 1, 40], 0, [1, 1, 1], [0, -10, 0], [fBuffer.t], index.length, cIndex,
+			[mMatrix, mvpMatrix, tMatrix, dvpMatrix, invTMatrix, lightPosition, 0, depthMethod],
+			['mMatrix', 'mvpMatrix', 'tMatrix', 'dvpMatrix', 'invTMatrix', 'lightPosition', 'texture', 'depthBuffer'],
+			['m4', 'm4', 'm4', 'm4', 'm4', 'v3', 'i1', 'i1'], prg);
 
 		gl.flush();
 		setTimeout(arguments.callee, 1000 / 30);
