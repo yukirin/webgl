@@ -292,3 +292,34 @@ function create_cube_texture(source, target) {
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
     }
 }
+
+function plane(color) {
+    var position = [
+        -1.0, 0.0, -1.0,
+        1.0, 0.0, -1.0,
+        -1.0, 0.0, 1.0,
+        1.0, 0.0, 1.0
+    ];
+
+    var uv = [
+        0.0, 0.0,
+        0.0, 1.0,
+        1.0, 0.0,
+        1.0, 1.0
+    ]
+    var normal = [
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0
+    ];
+
+    var colors = [...color, ...color, ...color, ...color];
+
+    var index = [
+        0, 2, 1,
+        3, 1, 2
+    ];
+
+    return { p: position, c: colors, n: normal, i: index, t: uv };
+}

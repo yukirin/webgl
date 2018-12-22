@@ -13,8 +13,8 @@ onload = function () {
 function renderWebGL() {
 	var eRange = document.getElementById('range');
 	c = document.getElementById('canvas');
-	c.width = 512;
-	c.height = 512;
+	c.width = 1000;
+	c.height = 600;
 
 	gl = c.getContext('webgl', { stencil: true }) || c.getContext('experimental-webgl', { stencil: true });
 	var prg = create_program('vertex.glsl', 'x-vertex', 'fragment.glsl', 'x-fragment');
@@ -23,29 +23,8 @@ function renderWebGL() {
 
 	var torusData = torus(64, 64, 1.0, 2.0, [1, 1, 1, 1]);
 	var trIndex = create_ibo(torusData.i);
-	var position = [
-		-1.0, 0.0, -1.0,
-		1.0, 0.0, -1.0,
-		-1.0, 0.0, 1.0,
-		1.0, 0.0, 1.0
-	];
-	var normal = [
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0
-	];
-	var color = [
-		0.9, 0.9, 0.9, 1.0,
-		0.9, 0.9, 0.9, 1.0,
-		0.9, 0.9, 0.9, 1.0,
-		0.9, 0.9, 0.9, 1.0
-	];
-	var index = [
-		0, 2, 1,
-		3, 1, 2
-	];
-	var cIndex = create_ibo(index);
+	var planeData = plane([0.9, 0.9, 0.9, 1.0]);
+	var pIndex = create_ibo(planeData.i);
 
 	var [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invTMatrix, invMatrix, tMatrix, dvMatrix, dpMatrix, dvpMatrix] = initialMatrix(11);
 	var lightPosition = [0.0, 30.0, 0.0];
@@ -122,8 +101,8 @@ function renderWebGL() {
 				['dvpMatrix', 'depthBuffer', 'mMatrix'], ['m4', 'i1', 'm4'], depthPrg);
 		}
 
-		linkAttribute([position], ['position'], [3], depthPrg);
-		render([40, 1, 40], 0, [1, 1, 1], [0, -10, 0], [], index.length, cIndex,
+		linkAttribute([planeData.p], ['position'], [3], depthPrg);
+		render([40, 1, 40], 0, [1, 1, 1], [0, -10, 0], [], planeData.i.length, pIndex,
 			[dvpMatrix, depthMethod, mMatrix],
 			['dvpMatrix', 'depthBuffer', 'mMatrix'], ['m4', 'i1', 'm4'], depthPrg);
 
@@ -143,8 +122,8 @@ function renderWebGL() {
 				['m4', 'm4', 'm4', 'm4', 'm4', 'v3', 'i1', 'i1'], prg);
 		}
 
-		linkAttribute([position, color, normal], ['position', 'color', 'normal'], [3, 4, 3], prg);
-		render([40, 1, 40], 0, [1, 1, 1], [0, -10, 0], [fBuffer.t], index.length, cIndex,
+		linkAttribute([planeData.p, planeData.c, planeData.n], ['position', 'color', 'normal'], [3, 4, 3], prg);
+		render([40, 1, 40], 0, [1, 1, 1], [0, -10, 0], [fBuffer.t], planeData.i.length, pIndex,
 			[mMatrix, mvpMatrix, tMatrix, dvpMatrix, invTMatrix, lightPosition, 0, depthMethod],
 			['mMatrix', 'mvpMatrix', 'tMatrix', 'dvpMatrix', 'invTMatrix', 'lightPosition', 'texture', 'depthBuffer'],
 			['m4', 'm4', 'm4', 'm4', 'm4', 'v3', 'i1', 'i1'], prg);
