@@ -1,0 +1,36 @@
+<html>
+
+<head>
+  <script src="./../lib/noiseX.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var octave = 5;
+    var offset = 3;
+    var persistence = 0.5;
+    var baseWidth = Math.pow(2, octave + offset);
+    var n = new noiseX(octave, offset, persistence);
+    n.setSeed(new Date().getTime());
+
+    onload = function () {
+      var i, j;
+      var canvas;
+      var noiseColor = new Array(baseWidth * baseWidth);
+      for (i = 0; i < baseWidth; i++) {
+        for (j = 0; j < baseWidth; j++) {
+          noiseColor[i * baseWidth + j] = n.noise(i, j);
+        }
+      }
+      canvas = n.canvasExport(noiseColor, baseWidth);
+      document.body.appendChild(canvas);
+    };
+  </script>
+  <style type="text/css">
+    canvas {
+      margin: 5px;
+    }
+  </style>
+</head>
+
+<body>
+</body>
+
+</html>
