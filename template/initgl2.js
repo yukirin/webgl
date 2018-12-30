@@ -1,325 +1,439 @@
 function create_shader(fileName, fileType) {
-    var shader;
+  let shader;
 
-    var request = new XMLHttpRequest();
-    request.open('GET', fileName, false);
-    request.overrideMimeType('text/html');
-    request.send(null);
+  let request = new XMLHttpRequest();
+  request.open('GET', fileName, false);
+  request.overrideMimeType('text/html');
+  request.send(null);
 
-    switch (fileType) {
-        case 'x-vertex':
-            shader = gl.createShader(gl.VERTEX_SHADER);
-            break;
+  switch (fileType) {
+    case 'x-vertex':
+      shader = gl.createShader(gl.VERTEX_SHADER);
+      break;
 
-        case 'x-fragment':
-            shader = gl.createShader(gl.FRAGMENT_SHADER);
-            break;
+    case 'x-fragment':
+      shader = gl.createShader(gl.FRAGMENT_SHADER);
+      break;
 
-        default:
-            return;
-    }
-    gl.shaderSource(shader, request.responseText);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert(gl.getShaderInfoLog(shader));
-    }
+    default:
+      return;
+  }
+  gl.shaderSource(shader, request.responseText);
+  gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    alert(gl.getShaderInfoLog(shader));
+  }
 
-    return shader;
+  return shader;
 }
 
 function initialMatrix(num) {
-    var matrixes = [];
+  let matrixes = [];
 
-    for (var i = 0; i < num; i++) {
-        matrixes.push(m.identity(m.create()));
-    }
-    return matrixes;
+  for (let i = 0; i < num; i++) {
+    matrixes.push(m.identity(m.create()));
+  }
+  return matrixes;
 }
 
 function clearBuffer(clearColor, clearDepth, clearStencil) {
-    gl.clearColor(...clearColor);
-    gl.clearDepth(clearDepth);
-    gl.clearStencil(clearStencil);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+  gl.clearColor(...clearColor);
+  gl.clearDepth(clearDepth);
+  gl.clearStencil(clearStencil);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 }
 
 function getMvpMatrix(mMatrix, eye, center, up, fovy, aspect, near, far) {
-    var vMatrix = m.identity(m.create());
-    var pMatrix = m.identity(m.create());
-    var mvpMatrix = m.identity(m.create());
+  let vMatrix = m.identity(m.create());
+  let pMatrix = m.identity(m.create());
+  let mvpMatrix = m.identity(m.create());
 
-    m.lookAt(eye, center, up, vMatrix);
-    m.perspective(fovy, aspect, near, far, pMatrix);
+  m.lookAt(eye, center, up, vMatrix);
+  m.perspective(fovy, aspect, near, far, pMatrix);
 
-    m.multiply(pMatrix, vMatrix, mvpMatrix);
-    m.multiply(mvpMatrix, mMatrix, mvpMatrix);
+  m.multiply(pMatrix, vMatrix, mvpMatrix);
+  m.multiply(mvpMatrix, mMatrix, mvpMatrix);
 
-    return mvpMatrix;
+  return mvpMatrix;
 }
 
 function create_program(vsFileName, vsFileType, fsFileName, fsFileType) {
-    var vs = create_shader(vsFileName, vsFileType);
-    var fs = create_shader(fsFileName, fsFileType);
+  let vs = create_shader(vsFileName, vsFileType);
+  let fs = create_shader(fsFileName, fsFileType);
 
-    var program = gl.createProgram();
-    gl.attachShader(program, vs);
-    gl.attachShader(program, fs);
+  let program = gl.createProgram();
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
 
-    gl.linkProgram(program);
+  gl.linkProgram(program);
 
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        alert(gl.getProgramInfoLog(program));
-    }
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    alert(gl.getProgramInfoLog(program));
+  }
 
-    gl.useProgram(program);
-    return program;
+  gl.useProgram(program);
+  return program;
 }
 
 function create_vbo(data) {
-    var vbo = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  let vbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-    return vbo;
+  return vbo;
 }
 
 function setAttribute(vbos, attLName, attS, prg) {
-    for (var i in vbos) {
-        var attLocation = gl.getAttribLocation(prg, attLName[i]);
+  for (let i in vbos) {
+    let attLocation = gl.getAttribLocation(prg, attLName[i]);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbos[i]);
-        gl.enableVertexAttribArray(attLocation);
-        gl.vertexAttribPointer(attLocation, attS[i], gl.FLOAT, false, 0, 0);
-    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbos[i]);
+    gl.enableVertexAttribArray(attLocation);
+    gl.vertexAttribPointer(attLocation, attS[i], gl.FLOAT, false, 0, 0);
+  }
 }
 
 function linkAttribute(datanum, attLName, attS, prg) {
-    for (var i in datanum) {
-        var vbo = create_vbo(datanum[i]);
-        var attLocation = gl.getAttribLocation(prg, attLName[i]);
+  for (let i in datanum) {
+    let vbo = create_vbo(datanum[i]);
+    let attLocation = gl.getAttribLocation(prg, attLName[i]);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-        gl.enableVertexAttribArray(attLocation);
-        gl.vertexAttribPointer(attLocation, attS[i], gl.FLOAT, false, 0, 0);
-    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.enableVertexAttribArray(attLocation);
+    gl.vertexAttribPointer(attLocation, attS[i], gl.FLOAT, false, 0, 0);
+  }
 }
 
 function linkUniform(datanum, uniformNames, uniformTypes, prg) {
-    for (var i in datanum) {
-        var loc = gl.getUniformLocation(prg, uniformNames[i]);
+  for (let i in datanum) {
+    let loc = gl.getUniformLocation(prg, uniformNames[i]);
 
-        switch (uniformTypes[i]) {
-            case 'm4':
-                gl.uniformMatrix4fv(loc, false, datanum[i]);
-                break;
-            case 'v3':
-                gl.uniform3fv(loc, datanum[i]);
-                break;
-            case 'v4':
-                gl.uniform4fv(loc, datanum[i]);
-                break;
-            case 'i1':
-                gl.uniform1i(loc, datanum[i]);
-                break;
-            case 'f1':
-                gl.uniform1f(loc, datanum[i]);
-                break;
-            default:
-                break;
-        }
+    switch (uniformTypes[i]) {
+      case 'm4':
+        gl.uniformMatrix4fv(loc, false, datanum[i]);
+        break;
+      case 'v3':
+        gl.uniform3fv(loc, datanum[i]);
+        break;
+      case 'v4':
+        gl.uniform4fv(loc, datanum[i]);
+        break;
+      case 'i1':
+        gl.uniform1i(loc, datanum[i]);
+        break;
+      case 'f1':
+        gl.uniform1f(loc, datanum[i]);
+        break;
+      case 'f1v':
+        gl.uniform1fv(loc, datanum[i]);
+        break;
+      case 'v2':
+        gl.uniform2fv(loc, datanum[i]);
+        break;
+      default:
+        break;
     }
+  }
 }
 
 function create_ibo(data) {
-    var ibo = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+  let ibo = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-    return ibo;
+  return ibo;
 }
 
-function create_texture(source, number) {
-    var img = new Image();
+function create_texture(source, number, canvasElement = null) {
+  if (canvasElement) {
+    let tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvasElement);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
 
-    img.onload = function () {
-        var tex = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    textures[number] = tex;
+    gl.bindTexture(gl.TEXTURE_2D, null);
 
-        textures[number] = tex;
-        gl.bindTexture(gl.TEXTURE_2D, null);
-    };
+    return;
+  }
 
-    img.src = source;
+  let img = new Image();
+  img.onload = function() {
+    let tex = gl.createTexture();
+
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    textures[number] = tex;
+    gl.bindTexture(gl.TEXTURE_2D, null);
+  };
+
+  img.src = source;
 }
 
 function blend_type(prm) {
-    switch (prm) {
-        case 0:
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-            break;
-        case 1:
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-            break;
-        default:
-            break;
-    }
+  switch (prm) {
+    case 0:
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      break;
+    case 1:
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+      break;
+    default:
+      break;
+  }
 }
 
 function mouseMove(e) {
-    var cw = c.width;
-    var ch = c.height;
-    var wh = 1 / Math.sqrt(cw * cw + ch * ch);
+  let cw = c.width;
+  let ch = c.height;
+  let wh = 1 / Math.sqrt(cw * cw + ch * ch);
 
-    var x = e.clientX - c.offsetLeft - cw * 0.5;
-    var y = e.clientY - c.offsetTop - ch * 0.5;
+  let x = e.clientX - c.offsetLeft - cw * 0.5;
+  let y = e.clientY - c.offsetTop - ch * 0.5;
 
-    var sq = Math.sqrt(x * x + y * y);
-    var r = sq * 2.0 * Math.PI * wh;
-    if (sq != 1) {
-        sq = 1 / sq;
-        x *= sq;
-        y *= sq;
-    }
+  let sq = Math.sqrt(x * x + y * y);
+  let r = sq * 2.0 * Math.PI * wh;
+  if (sq != 1) {
+    sq = 1 / sq;
+    x *= sq;
+    y *= sq;
+  }
 
-    q.rotate(r, [y, x, 0.0], qt);
+  q.rotate(r, [y, x, 0.0], cameraQt);
 }
 
-function create_framebuffer(width, height, targets) {
-    var frameBuffer = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+function create_framebuffer(width, height, isDepthTexture = false, targets = []) {
+  let frameBuffer = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
 
-    var depthRenderBuffer = gl.createRenderbuffer();
-    gl.bindRenderbuffer(gl.RENDERBUFFER, depthRenderBuffer);
+  let depthBuffer;
+  if (isDepthTexture) {
+    const ext = gl.getExtension('WEBGL_depth_texture');
+    depthBuffer = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, depthBuffer);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, width, height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthBuffer, 0);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+  } else {
+    depthBuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
     gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
-    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthRenderBuffer);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+  }
 
-    var fTexture = gl.createTexture();
+  let fTexture = gl.createTexture();
 
-    if (targets.length == 0) {
-        gl.bindTexture(gl.TEXTURE_2D, fTexture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fTexture, 0);
-        gl.bindTexture(gl.TEXTURE_2D, null);
-    } else {
-        gl.bindTexture(gl.TEXTURE_CUBE_MAP, fTexture);
+  if (targets.length == 0) {
+    gl.bindTexture(gl.TEXTURE_2D, fTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fTexture, 0);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+  } else {
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, fTexture);
 
-        for (var i in targets) {
-            gl.texImage2D(targets[i], 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-        }
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-        gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+    for (let i in targets) {
+      gl.texImage2D(targets[i], 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     }
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+  }
 
-    return { f: frameBuffer, d: depthRenderBuffer, t: fTexture };
+  gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+  return {f: frameBuffer, d: depthBuffer, t: fTexture};
 }
 
 function bind_texture(textures) {
-    units = [
-        gl.TEXTURE0, gl.TEXTURE1, gl.TEXTURE2, gl.TEXTURE3, gl.TEXTURE4,
-        gl.TEXTURE5, gl.TEXTURE6, gl.TEXTURE7, gl.TEXTURE8, gl.TEXTURE9
-    ];
+  const units = [
+    gl.TEXTURE0,
+    gl.TEXTURE1,
+    gl.TEXTURE2,
+    gl.TEXTURE3,
+    gl.TEXTURE4,
+    gl.TEXTURE5,
+    gl.TEXTURE6,
+    gl.TEXTURE7,
+    gl.TEXTURE8,
+    gl.TEXTURE9,
+  ];
 
-    for (var i in textures) {
-        gl.activeTexture(units[i]);
-        gl.bindTexture(gl.TEXTURE_2D, textures[i]);
-    }
+  for (let i in textures) {
+    gl.activeTexture(units[i]);
+    gl.bindTexture(gl.TEXTURE_2D, textures[i]);
+  }
 }
 
 function create_cube_texture(source, target) {
-    var cImg = new Array();
+  let cImg = new Array();
 
-    for (var i = 0; i < source.length; i++) {
-        cImg[i] = new cubeMapImage();
-        cImg[i].data.src = source[i];
+  for (let i = 0; i < source.length; i++) {
+    cImg[i] = new cubeMapImage();
+    cImg[i].data.src = source[i];
+  }
+
+  function cubeMapImage() {
+    this.data = new Image();
+
+    this.data.onload = function() {
+      this.imageDataLoaded = true;
+      checkLoaded();
+    };
+  }
+
+  function checkLoaded() {
+    if (cImg[0].data.imageDataLoaded && cImg[1].data.imageDataLoaded && cImg[2].data.imageDataLoaded &&
+        cImg[3].data.imageDataLoaded && cImg[4].data.imageDataLoaded && cImg[5].data.imageDataLoaded) {
+      generateCubeMap();
+    }
+  }
+
+  function generateCubeMap() {
+    let tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, tex);
+
+    for (let j = 0; j < source.length; j++) {
+      gl.texImage2D(target[j], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cImg[j].data);
     }
 
-    function cubeMapImage() {
-        this.data = new Image();
+    gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
 
-        this.data.onload = function () {
-            this.imageDataLoaded = true;
-            checkLoaded();
-        };
-    }
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-    function checkLoaded() {
-        if (cImg[0].data.imageDataLoaded &&
-            cImg[1].data.imageDataLoaded &&
-            cImg[2].data.imageDataLoaded &&
-            cImg[3].data.imageDataLoaded &&
-            cImg[4].data.imageDataLoaded &&
-            cImg[5].data.imageDataLoaded) {
-            generateCubeMap();
-        }
-    }
-
-    function generateCubeMap() {
-        var tex = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_CUBE_MAP, tex);
-
-        for (var j = 0; j < source.length; j++) {
-            gl.texImage2D(target[j], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cImg[j].data);
-        }
-
-        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-        cubeTexture = tex;
-        gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
-    }
+    cubeTexture = tex;
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+  }
 }
 
-function plane(color) {
-    var position = [
-        -1.0, 0.0, -1.0,
-        1.0, 0.0, -1.0,
-        -1.0, 0.0, 1.0,
-        1.0, 0.0, 1.0
-    ];
+function plane(color = [1.0, 1.0, 1.0, 1.0]) {
+  const position = [-1.0, 0.0, -1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
+  const uv = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0];
+  const normal = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0];
+  const colors = [...color, ...color, ...color, ...color];
+  const index = [0, 2, 1, 3, 1, 2];
 
-    var uv = [
-        0.0, 0.0,
-        0.0, 1.0,
-        1.0, 0.0,
-        1.0, 1.0
-    ]
-    var normal = [
-        0.0, 1.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 1.0, 0.0
-    ];
+  return {p: position, c: colors, n: normal, i: index, t: uv};
+}
 
-    var colors = [...color, ...color, ...color, ...color];
+function halfBox(color = [1.0, 1.0, 1.0, 1.0]) {
+  const uv = [0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0];
+  const normal =
+      [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0];
+  const colors = [...color, ...color, ...color, ...color, ...color, ...color, ...color];
+  const position =
+      [1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, -1.0, -1.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0];
+  const index = [0, 2, 3, 0, 3, 1, 2, 4, 5, 2, 5, 3, 1, 3, 5, 1, 5, 6];
 
-    var index = [
-        0, 2, 1,
-        3, 1, 2
-    ];
+  return {p: position, c: colors, n: normal, i: index, t: uv};
+}
 
-    return { p: position, c: colors, n: normal, i: index, t: uv };
+function particlePlane(color = [1.0, 1.0, 1.0, 1.0]) {
+  const position = [-1.0, 1.0, 0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0];
+  const colors = [...color, ...color, ...color, ...color];
+  const normal = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0];
+  const uv = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0];
+  const index = [0, 2, 1, 1, 2, 3];
+
+  return {p: position, c: colors, n: normal, i: index, t: uv};
+}
+
+function changePrgFramebuffer(
+    prg, fBuffer, viewport, initColor = [0.0, 0.0, 0.0, 1.0], initDepth = 1.0, initStencil = 0.0) {
+  gl.useProgram(prg);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fBuffer);
+  gl.viewport(0.0, 0.0, viewport[0], viewport[1]);
+  clearBuffer(initColor, initDepth, initStencil);
+}
+
+function gaussian_weight(size, dis) {
+  var weight = new Array(size);
+  var t = 0.0;
+  var d = dis * dis / 10;
+  for (var i = 0; i < weight.length; i++) {
+    var r = 0.0 + 2.0 * i;
+    var w = Math.exp(-0.5 * (r * r) / d);
+    weight[i] = w;
+    if (i > 0) {
+      w *= 2.0;
+    }
+    t += w;
+  }
+  for (i = 0; i < weight.length; i++) {
+    weight[i] /= t;
+  }
+  return weight;
+}
+
+function createNoiseT(width = 128) {
+  const n = new noiseX(5, 2, 0.6);
+  n.setSeed(new Date().getTime());
+  const noiseColor = new Array(width * width);
+
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < width; j++) {
+      noiseColor[i * width + j] = n.snoise(i, j, 128);
+      noiseColor[i * width + j] *= noiseColor[i * width + j];
+    }
+  }
+
+  return n.canvasExport(noiseColor, width);
+}
+
+function getParticleOffsets(particleCount = 30) {
+  const offsetPositionX = new Array(particleCount);
+  const offsetPositionZ = new Array(particleCount);
+  const offsetPositionY = new Array(particleCount);
+  const offsetPositionS = new Array(particleCount);
+  const offsetTexCoordS = new Array(particleCount);
+  const offsetTexCoordT = new Array(particleCount);
+
+  for (i = 0; i < particleCount; i++) {
+    offsetPositionX[i] = Math.random() * 6.0 - 3.0;
+    offsetPositionZ[i] = -Math.random() * 1.5 + 0.5;
+    offsetPositionY[i] = 0.0;
+    offsetPositionS[i] = Math.random() * 0.02;
+    offsetTexCoordS[i] = Math.random();
+    offsetTexCoordT[i] = Math.random();
+  }
+
+  offsetPositionZ.sort(function(a, b) {
+    return a - b;
+  });
+
+  return {
+    x: offsetPositionX,
+    y: offsetPositionY,
+    z: offsetPositionZ,
+    speed: offsetPositionS,
+    s: offsetTexCoordS,
+    t: offsetTexCoordT
+  };
 }
