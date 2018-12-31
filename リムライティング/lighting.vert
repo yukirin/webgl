@@ -8,7 +8,6 @@ uniform mat4 mvpMatrix;
 uniform mat4 invTMatrix;
 uniform vec3 lightDirection;
 uniform vec3 eyePosition;
-uniform vec3 eyeCenter;
 uniform vec4 rimColor;
 uniform float rimCoef;
 uniform float rimPower;

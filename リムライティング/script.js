@@ -93,15 +93,9 @@ onload = function() {
     linkAttribute([torusData.p, torusData.c, torusData.n], ['position', 'color', 'normal'], [3, 4, 3], prg);
     render(
         [1.0, 1.0, 1.0], Math.PI / 2, [1, 0, 0], [0.0, 0.0, 0.0], [], torusData.i.length, trIndex,
-        [
-          mMatrix, mvpMatrix, invTMatrix, lightDirection, camPosition, [1.0, 1.0, 1.0, 1.0], [0.0, 0.0, 0.0], rimCoef,
-          rimPower
-        ],
-        [
-          'mMatrix', 'mvpMatrix', 'invTMatrix', 'lightDirection', 'eyePosition', 'rimColor', 'eyeCenter', 'rimCoef',
-          'rimPower'
-        ],
-        ['m4', 'm4', 'm4', 'v3', 'v3', 'v4', 'v3', 'f1', 'f1'], prg);
+        [mMatrix, mvpMatrix, invTMatrix, lightDirection, camPosition, [1.0, 1.0, 1.0, 1.0], rimCoef, rimPower],
+        ['mMatrix', 'mvpMatrix', 'invTMatrix', 'lightDirection', 'eyePosition', 'rimColor', 'rimCoef', 'rimPower'],
+        ['m4', 'm4', 'm4', 'v3', 'v3', 'v4', 'f1', 'f1'], prg);
 
     gl.flush();
     requestAnimationFrame(renderFrame);
