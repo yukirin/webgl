@@ -15,8 +15,6 @@ float linearDepth(float depth) {
   float a = 2.0 * zNear;
   float b = zFar + zNear - depth * (zFar - zNear);
 
-  // float a = zNear * depth;
-  // float b = zFar - depth * (zFar - zNear);
   return a / b;
 }
 
