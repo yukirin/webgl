@@ -176,7 +176,7 @@ onload = function() {
     linkAttribute([planeData.p, planeData.t], ['position', 'texCoord'], [3, 2], addPrg);
     render(
         [1.0, 1.0, 1.0], Math.PI / 2, [1, 0, 0], [0, 0, 0], [filterBuffer.t], planeData.i.length, pIndex,
-        [mvpMatrix, 0, strength], ['mvpMatrix', 'texture'], ['m4', 'i1'], addPrg);
+        [mvpMatrix, 0], ['mvpMatrix', 'texture'], ['m4', 'i1'], addPrg);
 
     gl.disable(gl.BLEND);
     gl.flush();
