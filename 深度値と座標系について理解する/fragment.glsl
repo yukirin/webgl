@@ -31,24 +31,11 @@ void main(void) {
   vec4 depthColor = vec4(1.0);
 
   if (vDepth.w > 0.0) {
-    if (depthBuffer) {
-      vec4 lightCoord = ((vDepth / vDepth.w) + 1.0) * 0.5;
+    vec4 lightCoord = ((vDepth / vDepth.w) + 1.0) * 0.5;
 
-      if (lightCoord.z - 0.0001 > shadow) {
-        depthColor = vec4(0.5, 0.5, 0.5, 1.0);
-      }
-    } else {
-      float near = 0.1;
-      float far = 150.0;
-      float linerDepth = 1.0 / (far - near);
-
-      linerDepth *= length(vPosition.xyz - lightPosition);
-
-      if (linerDepth - 0.0001 > shadow) {
-        depthColor = vec4(0.5, 0.5, 0.5, 1.0);
-      }
+    if (lightCoord.z - 0.0001 > shadow) {
+      depthColor = vec4(0.5, 0.5, 0.5, 1.0);
     }
   }
-
   gl_FragColor = vColor * vec4(vec3(diffuse), 1.0) * depthColor;
 }
