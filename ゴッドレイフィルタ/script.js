@@ -16,7 +16,7 @@ onload = function() {
   c.addEventListener('mousemove', mouseMove, true);
 
   gl = c.getContext('webgl', {stencil: true}) || c.getContext('experimental-webgl', {stencil: true});
-  gl.getExtension('EXT_frag_depth');
+  getExtensions(gl);
   const prg = create_program('lighting.vert', 'x-vertex', 'lighting.frag', 'x-fragment');
   const filterPrg = create_program('godray.vert', 'x-vertex', 'godray.frag', 'x-fragment');
   const addPrg = create_program('add.vert', 'x-vertex', 'add.frag', 'x-fragment');
