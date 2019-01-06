@@ -215,13 +215,12 @@ function mouseMove(e) {
   q.rotate(r, [y, x, 0.0], cameraQt);
 }
 
-function create_framebuffer(width, height, isDepthTexture = false, targets = []) {
+function create_framebuffer(width, height, isDepthTexture = false, isFloatTexture = false, targets = []) {
   let frameBuffer = gl.createFramebuffer();
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
 
   let depthBuffer;
   if (isDepthTexture) {
-    const ext = gl.getExtension('WEBGL_depth_texture');
     depthBuffer = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, depthBuffer);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, width, height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
@@ -241,8 +240,9 @@ function create_framebuffer(width, height, isDepthTexture = false, targets = [])
   let fTexture = gl.createTexture();
 
   if (targets.length == 0) {
+    const textureType = isFloatTexture ? gl.FLOAT : gl.UNSIGNED_BYTE;
     gl.bindTexture(gl.TEXTURE_2D, fTexture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, textureType, null);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -436,4 +436,31 @@ function getParticleOffsets(particleCount = 30) {
     s: offsetTexCoordS,
     t: offsetTexCoordT
   };
+}
+
+function getExtensions(context) {
+  context.getExtension('WEBGL_depth_texture');
+  context.getExtension('EXT_frag_depth');
+
+  context.getExtension('OES_texture_float');
+  context.getExtension('OES_texture_float_linear');
+  context.getExtension('WEBGL_color_buffer_float');
+
+  const extVAO = context.getExtension('OES_vertex_array_object');
+
+  return {
+    vao: extVAO
+  }
+}
+
+function createVAO(datanum, attLName, attS, indexData, prg) {
+  const vao = ext.vao.createVertexArrayOES();
+  const ibo = create_ibo(indexData);
+
+  ext.vao.bindVertexArrayOES(vao);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+  linkAttribute(datanum, attLName, attS, prg);
+  ext.vao.bindVertexArrayOES(null);
+
+  return vao;
 }
