@@ -155,6 +155,7 @@ function create_texture(source, number, canvasElement = null) {
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, ext.aft.TEXTURE_MAX_ANISOTROPY_EXT, 16);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
 
@@ -173,6 +174,7 @@ function create_texture(source, number, canvasElement = null) {
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, ext.aft.TEXTURE_MAX_ANISOTROPY_EXT, 16);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
@@ -445,11 +447,12 @@ function getExtensions(context) {
   context.getExtension('OES_texture_float');
   context.getExtension('OES_texture_float_linear');
   context.getExtension('WEBGL_color_buffer_float');
+  const extAFT = context.getExtension('EXT_texture_filter_anisotropic');
 
   const extVAO = context.getExtension('OES_vertex_array_object');
 
   return {
-    vao: extVAO
+    vao: extVAO, aft: extAFT
   }
 }
 
