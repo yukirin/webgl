@@ -90,7 +90,7 @@ onload = function() {
       return;
     }
 
-    if (drawPoints) {
+    if (isDrawPoints) {
       gl.drawArrays(gl.POINTS, 0, indexSize);
       return;
     }
