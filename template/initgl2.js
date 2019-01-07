@@ -95,7 +95,7 @@ function setAttribute(vbos, attLName, attS, prg) {
   }
 }
 
-function linkAttribute(datanum, attLName, attS, prg) {
+function linkAttribute(datanum, attLName, attS, insDivs, prg) {
   for (let i in datanum) {
     let vbo = create_vbo(datanum[i]);
     let attLocation = gl.getAttribLocation(prg, attLName[i]);
@@ -103,6 +103,10 @@ function linkAttribute(datanum, attLName, attS, prg) {
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.enableVertexAttribArray(attLocation);
     gl.vertexAttribPointer(attLocation, attS[i], gl.FLOAT, false, 0, 0);
+
+    if (insDivs[i] != 0) {
+      ext.ins.vertexAttribDivisorANGLE(attLocation, insDivs[i]);
+    }
   }
 }
 
@@ -443,26 +447,25 @@ function getParticleOffsets(particleCount = 30) {
 function getExtensions(context) {
   context.getExtension('WEBGL_depth_texture');
   context.getExtension('EXT_frag_depth');
-
   context.getExtension('OES_texture_float');
   context.getExtension('OES_texture_float_linear');
   context.getExtension('WEBGL_color_buffer_float');
   const extAFT = context.getExtension('EXT_texture_filter_anisotropic');
-
   const extVAO = context.getExtension('OES_vertex_array_object');
+  const extIns = context.getExtension('ANGLE_instanced_arrays');
 
   return {
-    vao: extVAO, aft: extAFT
+    vao: extVAO, aft: extAFT, ins: extIns
   }
 }
 
-function createVAO(datanum, attLName, attS, indexData, prg) {
+function createVAO(datanum, attLName, attS, insDivs, indexData, prg) {
   const vao = ext.vao.createVertexArrayOES();
   const ibo = create_ibo(indexData);
 
   ext.vao.bindVertexArrayOES(vao);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-  linkAttribute(datanum, attLName, attS, prg);
+  linkAttribute(datanum, attLName, attS, insDivs, prg);
   ext.vao.bindVertexArrayOES(null);
 
   return vao;

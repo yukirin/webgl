@@ -22,14 +22,36 @@ onload = function() {
 
   const fBufferSize = 2048;
 
-  const pData = plane();
+  const trData = torus(64, 64, 0.08, 0.15);
+  const instanceCount = 100;
+  const instancePositions = new Array();
+  const instanceColors = new Array();
+  const offsetPosition = 3;
+  const offsetColor = 4;
+
+  for (var i = 0; i < instanceCount; i++) {
+    var j = i % 10;
+    var k = Math.floor(i / 10) * 0.5 + 0.5;
+    var rad = (3600 / instanceCount) * j * Math.PI / 180;
+    instancePositions[i * offsetPosition] = Math.cos(rad) * k;
+    instancePositions[i * offsetPosition + 1] = 0.0;
+    instancePositions[i * offsetPosition + 2] = Math.sin(rad) * k;
+
+    var hsv = hsva((3600 / instanceCount) * i, 1.0, 1.0, 1.0);
+    instanceColors[i * offsetColor] = hsv[0];
+    instanceColors[i * offsetColor + 1] = hsv[1];
+    instanceColors[i * offsetColor + 2] = hsv[2];
+    instanceColors[i * offsetColor + 3] = hsv[3];
+  }
+
   const vaos = {};
-  vaos.plane = createVAO(
-      [pData.p, pData.c, pData.n, pData.t], ['position', 'color', 'normal', 'texCoord'], [3, 4, 3, 2], pData.i, prg);
+  vaos.torus = createVAO(
+      [trData.p, trData.n, instancePositions, instanceColors],
+      ['position', 'normal', 'instancePosition', 'instanceColor'], [3, 3, 3, 4], [0, 0, 1, 1], trData.i, prg);
 
   const [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invTMatrix, invMatrix, tMatrix] = initialMatrix(8);
   const lightDirection = [1.0, 1.0, 2.0];
-  const initCamPosition = [0.0, 0.2, 1.0];
+  const initCamPosition = [0.0, 5.0, 5.0];
   const initCamUpDirection = [0, 1, 0];
   const camPosition = [];
   const camUpDirection = [];
@@ -46,7 +68,9 @@ onload = function() {
   // gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
   // gl.enable(gl.BLEND);
 
-  function render(scale, rad, axis, translate, textures, indexSize, linkValues, linkNames, linkTypes, prg) {
+  function render(
+      scale, rad, axis, translate, textures, indexSize, linkValues, linkNames, linkTypes, prg, isDrawPoints = false,
+      isInstanced = false, insCount = 1) {
     bind_texture(textures);
 
     m.identity(mMatrix);
@@ -60,6 +84,17 @@ onload = function() {
     m.transpose(invMatrix, invTMatrix);
 
     linkUniform(linkValues, linkNames, linkTypes, prg);
+
+    if (isInstanced) {
+      ext.ins.drawElementsInstancedANGLE(gl.TRIANGLES, indexSize, gl.UNSIGNED_SHORT, 0, insCount);
+      return;
+    }
+
+    if (drawPoints) {
+      gl.drawArrays(gl.POINTS, 0, indexSize);
+      return;
+    }
+
     gl.drawElements(gl.TRIANGLES, indexSize, gl.UNSIGNED_SHORT, 0);
   }
 
@@ -92,12 +127,12 @@ onload = function() {
 
     changePrgFramebuffer(prg, null, [c.width, c.height]);
     setVPMatrix(45, c.width, c.height, 0.1, 150);
-    ext.vao.bindVertexArrayOES(vaos.plane);
+    ext.vao.bindVertexArrayOES(vaos.torus);
     render(
-        [1.0, 1.0, 1.0], 0, [1, 1, 0], [0, 0, 0], [textures[0]], pData.i.length,
-        [mMatrix, mvpMatrix, invTMatrix, lightDirection, camPosition, ambientColor, 0],
-        ['mMatrix', 'mvpMatrix', 'invTMatrix', 'lightDirection', 'eyePosition', 'ambientColor', 'texture'],
-        ['m4', 'm4', 'm4', 'v3', 'v3', 'v4', 'i1'], prg);
+        [1.0, 1.0, 1.0], rad, [1, 1, 1], [0, 0, 0], [], trData.i.length,
+        [mMatrix, mvpMatrix, invTMatrix, lightDirection, camPosition, ambientColor],
+        ['mMatrix', 'mvpMatrix', 'invTMatrix', 'lightDirection', 'eyePosition', 'ambientColor'],
+        ['m4', 'm4', 'm4', 'v3', 'v3', 'v4'], prg, false, true, instanceCount);
 
     gl.flush();
     requestAnimationFrame(renderFrame);
