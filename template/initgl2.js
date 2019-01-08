@@ -470,3 +470,34 @@ function createVAO(datanum, attLName, attS, insDivs, indexData, prg) {
 
   return vao;
 }
+
+function SettingVideoTexture(button, number) {
+  button.addEventListener('click', function() {
+    button.value = 'running';
+    button.disabled = true;
+    video.play();
+    textures[number] = videoTexture;
+  }, true);
+
+  const video = document.createElement('video');
+  video.addEventListener('canplaythrough', function() {
+    if (button.value !== 'running') {
+      button.value = 'can play video';
+      button.disabled = false;
+    }
+  }, true);
+
+  video.addEventListener('ended', function() {
+    video.play();
+  }, true);
+
+  const videoTexture = gl.createTexture(gl.TEXTURE_2D);
+  gl.bindTexture(gl.TEXTURE_2D, videoTexture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  video.src = 'video.mp4';
+  return video;
+}
