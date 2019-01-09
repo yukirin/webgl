@@ -47,7 +47,7 @@ onload = function() {
   const vaos = {};
   vaos.torus = createVAO(
       [trData.p, trData.n, instancePositions, instanceColors],
-      ['position', 'normal', 'instancePosition', 'instanceColor'], [3, 3, 3, 4], [0, 0, 1, 1], trData.i, prg);
+      ['position,3', 'normal,3', 'instancePosition,3', 'instanceColor,4'], [0, 0, 1, 1], trData.i, prg);
 
   const [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invTMatrix, invMatrix, tMatrix] = initialMatrix(8);
   const lightDirection = [1.0, 1.0, 2.0];
@@ -69,7 +69,7 @@ onload = function() {
   // gl.enable(gl.BLEND);
 
   function render(
-      scale, rad, axis, translate, textures, indexSize, linkValues, linkNames, linkTypes, prg, isDrawPoints = false,
+      scale, rad, axis, translate, textures, indexSize, linkValues, linkNames_Types, prg, isDrawPoints = false,
       isInstanced = false, insCount = 1) {
     bind_texture(textures);
 
@@ -83,7 +83,7 @@ onload = function() {
     m.inverse(mMatrix, invMatrix);
     m.transpose(invMatrix, invTMatrix);
 
-    linkUniform(linkValues, linkNames, linkTypes, prg);
+    linkUniform(linkValues, linkNames_Types, prg);
 
     if (isInstanced) {
       ext.ins.drawElementsInstancedANGLE(gl.TRIANGLES, indexSize, gl.UNSIGNED_SHORT, 0, insCount);
@@ -131,8 +131,8 @@ onload = function() {
     render(
         [1.0, 1.0, 1.0], rad, [1, 1, 1], [0, 0, 0], [], trData.i.length,
         [mMatrix, mvpMatrix, invTMatrix, lightDirection, camPosition, ambientColor],
-        ['mMatrix', 'mvpMatrix', 'invTMatrix', 'lightDirection', 'eyePosition', 'ambientColor'],
-        ['m4', 'm4', 'm4', 'v3', 'v3', 'v4'], prg, false, true, instanceCount);
+        ['mMatrix,m4', 'mvpMatrix,m4', 'invTMatrix,m4', 'lightDirection,v3', 'eyePosition,v3', 'ambientColor,v4'], prg,
+        false, true, instanceCount);
 
     gl.flush();
     requestAnimationFrame(renderFrame);

@@ -85,24 +85,26 @@ function create_vbo(data) {
   return vbo;
 }
 
-function setAttribute(vbos, attLName, attS, prg) {
+function setAttribute(vbos, attLName_S, prg) {
   for (let i in vbos) {
-    let attLocation = gl.getAttribLocation(prg, attLName[i]);
+    const [name, stride] = attLName_S[i].split(',');
+    let attLocation = gl.getAttribLocation(prg, name);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vbos[i]);
     gl.enableVertexAttribArray(attLocation);
-    gl.vertexAttribPointer(attLocation, attS[i], gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(attLocation, parseInt(stride), gl.FLOAT, false, 0, 0);
   }
 }
 
-function linkAttribute(datanum, attLName, attS, insDivs, prg) {
+function linkAttribute(datanum, attLName_S, insDivs, prg) {
   for (let i in datanum) {
+    const [name, stride] = attLName_S[i].split(',');
     let vbo = create_vbo(datanum[i]);
-    let attLocation = gl.getAttribLocation(prg, attLName[i]);
+    let attLocation = gl.getAttribLocation(prg, name);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.enableVertexAttribArray(attLocation);
-    gl.vertexAttribPointer(attLocation, attS[i], gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(attLocation, parseInt(stride), gl.FLOAT, false, 0, 0);
 
     if (insDivs[i] != 0) {
       ext.ins.vertexAttribDivisorANGLE(attLocation, insDivs[i]);
@@ -110,11 +112,12 @@ function linkAttribute(datanum, attLName, attS, insDivs, prg) {
   }
 }
 
-function linkUniform(datanum, uniformNames, uniformTypes, prg) {
+function linkUniform(datanum, uniformNames_Types, prg) {
   for (let i in datanum) {
-    let loc = gl.getUniformLocation(prg, uniformNames[i]);
+    const [name, type] = uniformNames_Types[i].split(',');
+    let loc = gl.getUniformLocation(prg, name);
 
-    switch (uniformTypes[i]) {
+    switch (type) {
       case 'm4':
         gl.uniformMatrix4fv(loc, false, datanum[i]);
         break;
@@ -454,19 +457,20 @@ function getExtensions(context) {
   const extAFT = context.getExtension('EXT_texture_filter_anisotropic');
   const extVAO = context.getExtension('OES_vertex_array_object');
   const extIns = context.getExtension('ANGLE_instanced_arrays');
+  const extMRT = context.getExtension('WEBGL_draw_buffers');
 
   return {
-    vao: extVAO, aft: extAFT, ins: extIns
+    vao: extVAO, aft: extAFT, ins: extIns, MRT: extMRT
   }
 }
 
-function createVAO(datanum, attLName, attS, insDivs, indexData, prg) {
+function createVAO(datanum, attLName_S, insDivs, indexData, prg) {
   const vao = ext.vao.createVertexArrayOES();
   const ibo = create_ibo(indexData);
 
   ext.vao.bindVertexArrayOES(vao);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-  linkAttribute(datanum, attLName, attS, insDivs, prg);
+  linkAttribute(datanum, attLName_S, insDivs, prg);
   ext.vao.bindVertexArrayOES(null);
 
   return vao;
