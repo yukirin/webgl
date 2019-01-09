@@ -10,5 +10,11 @@ function faceNormal(v0, v1, v2) {
   n[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2];
   n[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0];
 
+  // 面法線ベクトルを正規化
+  const l = Math.sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
+  n[0] /= l;
+  n[1] /= l;
+  n[2] /= l;
+
   return n;
 }
