@@ -97,14 +97,27 @@ function setAttribute(vbos, attLName_S, prg) {
 }
 
 function linkAttribute(datanum, attLName_S, insDivs, prg) {
-  for (let i in datanum) {
-    const [name, stride] = attLName_S[i].split(',');
-    let vbo = create_vbo(datanum[i]);
-    let attLocation = gl.getAttribLocation(prg, name);
+  let stride = 0;
+  const strides = [], names = [];
+  for (let i in attLName_S) {
+    const [n, s] = attLName_S[i].split(',');
+    stride += parseInt(s);
+    strides[i] = parseInt(s);
+    names[i] = n;
+  }
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  const byteLength = stride * 4;  // gl.FLOAT === 32bit === 4byte
+  const vertexBufferData = createInterleaveBuffer(datanum, strides);
+  const vbo = create_vbo(vertexBufferData);
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+
+  let countStride = 0;
+  for (let i in datanum) {
+    const attLocation = gl.getAttribLocation(prg, names[i]);
+
     gl.enableVertexAttribArray(attLocation);
-    gl.vertexAttribPointer(attLocation, parseInt(stride), gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(attLocation, strides[i], gl.FLOAT, false, byteLength, countStride * 4);
+    countStride += strides[i];
 
     if (insDivs[i] != 0) {
       ext.ins.vertexAttribDivisorANGLE(attLocation, insDivs[i]);
@@ -520,4 +533,19 @@ function SettingVideoTexture(button, number) {
 
   video.src = 'video.mp4';
   return video;
+}
+
+function createInterleaveBuffer(datanum, strides) {
+  const vertexBuffer = [];
+  const dataLength = datanum[0].length / strides[0];
+
+  for (let i = 0; i < dataLength; i++) {
+    for (let n in datanum) {
+      const start = i * strides[n];
+      const end = start + strides[n];
+      vertexBuffer.push(...datanum[n].slice(start, end));
+    }
+  }
+
+  return vertexBuffer;
 }
