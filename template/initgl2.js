@@ -224,7 +224,7 @@ function mouseMove(e) {
   q.rotate(r, [y, x, 0.0], cameraQt);
 }
 
-function create_framebuffer(width, height, isDepthTexture = false, isFloatTexture = false, targets = []) {
+function create_framebuffer(width, height, isDepthTexture = false, isFloatTexture = false, mrtCount = 1, targets = []) {
   let frameBuffer = gl.createFramebuffer();
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
 
@@ -246,21 +246,26 @@ function create_framebuffer(width, height, isDepthTexture = false, isFloatTextur
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
   }
 
-  let fTexture = gl.createTexture();
+  const fTexture = [];
 
   if (targets.length == 0) {
-    const textureType = isFloatTexture ? gl.FLOAT : gl.UNSIGNED_BYTE;
-    const textureFilter = isFloatTexture ? gl.NEAREST : gl.LINEAR;
-    gl.bindTexture(gl.TEXTURE_2D, fTexture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, textureType, null);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, textureFilter);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, textureFilter);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fTexture, 0);
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    for (let i = 0; i < mrtCount; i++) {
+      fTexture[i] = gl.createTexture();
+      const textureType = isFloatTexture ? gl.FLOAT : gl.UNSIGNED_BYTE;
+      const textureFilter = isFloatTexture ? gl.NEAREST : gl.LINEAR;
+
+      gl.bindTexture(gl.TEXTURE_2D, fTexture[i]);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, textureType, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, textureFilter);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, textureFilter);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, ext.MRT.COLOR_ATTACHMENT0_WEBGL + i, gl.TEXTURE_2D, fTexture[i], 0);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+    }
   } else {
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, fTexture);
+    fTexture[0] = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, fTexture[0]);
 
     for (let i in targets) {
       gl.texImage2D(targets[i], 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
@@ -376,9 +381,18 @@ function particlePlane(color = [1.0, 1.0, 1.0, 1.0]) {
 }
 
 function changePrgFramebuffer(
-    prg, fBuffer, viewport, initColor = [0.0, 0.0, 0.0, 1.0], initDepth = 1.0, initStencil = 0.0) {
+    prg, fBuffer, viewport, initColor = [0.0, 0.0, 0.0, 1.0], initDepth = 1.0, initStencil = 0.0, mrtCount = 1) {
   gl.useProgram(prg);
   gl.bindFramebuffer(gl.FRAMEBUFFER, fBuffer);
+
+  if (fBuffer != null) {
+    const bufferList = [];
+    for (let i = 0; i < mrtCount; i++) {
+      bufferList[i] = ext.MRT.COLOR_ATTACHMENT0_WEBGL + i;
+    }
+    ext.MRT.drawBuffersWEBGL(bufferList);
+  }
+
   gl.viewport(0.0, 0.0, viewport[0], viewport[1]);
   clearBuffer(initColor, initDepth, initStencil);
 }
@@ -454,6 +468,7 @@ function getExtensions(context) {
   context.getExtension('OES_texture_float');
   context.getExtension('OES_texture_float_linear');
   context.getExtension('WEBGL_color_buffer_float');
+  context.getExtension('OES_standard_derivatives');
   const extAFT = context.getExtension('EXT_texture_filter_anisotropic');
   const extVAO = context.getExtension('OES_vertex_array_object');
   const extIns = context.getExtension('ANGLE_instanced_arrays');
