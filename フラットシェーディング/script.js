@@ -22,8 +22,7 @@ onload = function() {
 
   const trData = torus(8, 8, 0.25, 0.5, [1.0, 1.0, 1.0, 1.0]);
   const vaos = {};
-  vaos.torus = createVAO(
-      [trData.p, trData.n, trData.c], ['position,3', 'normal,3', 'color,4'], [0, 0, 0], trData.i, lightingPrg);
+  vaos.torus = createVAO([trData.p, trData.c], ['position,3', 'color,4'], [0, 0], trData.i, lightingPrg);
 
   const [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invTMatrix, invMatrix, tMatrix] = initialMatrix(8);
   const lightDirection = [0.0, 5.0, 5.0];
