@@ -502,23 +502,22 @@ function getExtensions(context) {
   context.getExtension('WEBGL_color_buffer_float');
   context.getExtension('OES_standard_derivatives');
   const extAFT = context.getExtension('EXT_texture_filter_anisotropic');
-  const extVAO = context.getExtension('OES_vertex_array_object');
   const extIns = context.getExtension('ANGLE_instanced_arrays');
   const extMRT = context.getExtension('WEBGL_draw_buffers');
 
   return {
-    vao: extVAO, aft: extAFT, ins: extIns, MRT: extMRT
+    aft: extAFT, ins: extIns, MRT: extMRT
   }
 }
 
 function createVAO(datanum, attLName_S, insDivs, indexData, prg) {
-  const vao = ext.vao.createVertexArrayOES();
+  const vao = gl.createVertexArray();
   const ibo = create_ibo(indexData);
 
-  ext.vao.bindVertexArrayOES(vao);
+  gl.bindVertexArray(vao);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
   linkAttribute(datanum, attLName_S, insDivs, prg);
-  ext.vao.bindVertexArrayOES(null);
+  gl.bindVertexArray(null);
 
   return vao;
 }
