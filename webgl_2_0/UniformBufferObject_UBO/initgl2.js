@@ -571,7 +571,6 @@ function linkUBO(uboNames, uboDatanum, prgs) {
       if (blockIndex == gl.INVALID_INDEX) {
         continue;
       }
-      console.log(uboNames[i], blockIndex);
 
       gl.uniformBlockBinding(prgs[k], blockIndex, i);
     }
