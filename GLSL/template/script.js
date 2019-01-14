@@ -1,7 +1,7 @@
 let c, gl, ext, then = 0;
 let textures = [], cubeTexture = null;
 const m = new matIV(), q = new qtnIV();
-const cameraQt = q.identity(q.create()), mousePosition = [];
+const cameraQt = q.identity(q.create()), mousePosition = [0.5, 0.5];
 
 onload = function() {
   const eRange = document.getElementById('range');
