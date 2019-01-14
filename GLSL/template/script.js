@@ -1,31 +1,26 @@
-let c, gl, ext;
-let then = 0;
-let cubeTexture = null;
-const m = new matIV();
-const q = new qtnIV();
-const textures = [];
-const cameraQt = q.identity(q.create());
+let c, gl, ext, then = 0;
+let textures = [], cubeTexture = null;
+const m = new matIV(), q = new qtnIV();
+const cameraQt = q.identity(q.create()), mousePosition = [];
 
 onload = function() {
   const eRange = document.getElementById('range');
   const eCheck = document.getElementById('checkbox');
 
   c = document.getElementById('canvas');
-  c.width = 1280;
-  c.height = 720;
-  c.addEventListener('mousemove', mouseMove, true);
+  c.width = 512;
+  c.height = 512;
+  c.addEventListener('mousemove', mouseMove2, true);
 
   gl = c.getContext('webgl2', {stencil: true});
   ext = getExtensions(gl);
   const prg = create_program('lighting.vert', 'x-vertex', 'lighting.frag', 'x-fragment');
   const fBufferSize = 2048;
-  create_texture('sample.jpg', 0);
 
-  const trData = torus(64, 64, 0.35, 1.0);
+  const pData = plane();
   const vaos = {};
   let vbos;
-  [vaos.torus, vbos] =
-      createVAO([trData.p, trData.t, trData.n], ['position,3', 'texCoord,2', 'normal,3'], [0, 0, 0], trData.i, prg);
+  [vaos.plane, vbos] = createVAO([pData.p], ['position,3'], [0], pData.i, prg);
 
   const [mMatrix, vMatrix, pMatrix, tmpMatrix, mvpMatrix, invTMatrix, invMatrix, tMatrix] = initialMatrix(8);
   const lightDirection = [1.0, 1.0, 2.0];
@@ -50,20 +45,24 @@ onload = function() {
     now *= 0.001;
     const deltaTime = now - then;
     then = now;
-    const state = eCheck.checked;
-    const strength = eRange.value;
 
     count++;
+    const state = eCheck.checked;
+    const strength = eRange.value;
     const rad = (count % 720) * Math.PI / 360;
     const hsv = hsva((count / 2) % 360, 1, 1, 1);
 
+    if (state) {
+      requestAnimationFrame(renderFrame);
+      return;
+    }
+
     changePrgFramebuffer(prg, null, [c.width, c.height]);
-    gl.bindVertexArray(vaos.torus);
-    setVPMatrix(45, c.width, c.height, 0.1, 150);
+    gl.bindVertexArray(vaos.plane);
+    setVPMatrix(45, c.width, c.height, 0.1, 150, true);
     render(
-        [1.0, 1.0, 1.0], rad, [1, 1, 1], [0, 0, 0], [textures[0]], trData.i.length,
-        [mMatrix, mvpMatrix, invTMatrix, lightDirection, camPosition, 0],
-        ['mMatrix,m4', 'mvpMatrix,m4', 'invTMatrix,m4', 'lightPosition,v3', 'eyePosition,v3', 'texture2dSampler,i1'],
+        [1.0, 1.0, 1.0], Math.PI / 2, [1, 0, 0], [0, 0, 0], [], pData.i.length,
+        [mvpMatrix, now, mousePosition, [c.width, c.height]], ['mvpMatrix,m4', 'time,f1', 'mouse,v2', 'resolution,v2'],
         prg);
 
     gl.flush();

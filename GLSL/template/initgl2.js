@@ -709,8 +709,8 @@ function mouseMove2(eve) {
   const bound = eve.currentTarget.getBoundingClientRect();
   const x = eve.clientX - bound.left;
   const y = eve.clientY - bound.top;
-  mousePosition[0] = x / bound.width * 2.0 - 1.0;
-  mousePosition[1] = -(y / bound.height * 2.0 - 1.0);
+  mousePosition[0] = x / bound.width;
+  mousePosition[1] = y / bound.height;
 }
 
 function getImageData(width, height, srcName) {
