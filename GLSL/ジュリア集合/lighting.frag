@@ -28,7 +28,6 @@ void main(void) {
   int j = 0;
   vec2 c = vec2(-0.345, 0.654);
   vec2 y = vec2(time * 0.005, 0.0);
-  y = vec2(0.0, 0.0);
   vec2 z = p;
 
   for (int i = 0; i < 360; i++) {
