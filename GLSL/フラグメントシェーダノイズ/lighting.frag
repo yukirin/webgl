@@ -68,9 +68,9 @@ void main(void) {
   float n = noise(t);
 
   // seamless noise
-  // const float map = 256.0;
-  // vec2 t = mod(gl_FragCoord.xy + vec2(time * 10.0), map);
-  // float n = snoise(t, t / map, vec2(map));
+  const float map = 256.0;
+  vec2 st = mod(gl_FragCoord.xy + vec2(time * 10.0), map);
+  float sn = snoise(st, st / map, vec2(map));
 
-  outColor = vec4(vec3(n), 1.0);
+  outColor = vec4(vec3(sn), 1.0);
 }
