@@ -16,10 +16,10 @@ vec2 normalizeSCreenCoord() { return (gl_FragCoord.xy * 2.0 - resolution) / min(
 vec2 normalizeMousePosition(vec2 mousePos) { return vec2(mousePos.x * 2.0 - 1.0, -(mousePos.y * 2.0 - 1.0)); }
 
 const float sphereSize = 1.0;
+const vec3 lightDir = vec3(-0.577, 0.577, 0.577);
 const float PI = 3.14159265;
 const float angle = 60.0;
 const float fov = angle * 0.5 * PI / 180.0;
-const vec3 lightDir = vec3(-0.577, 0.577, 0.577);
 
 float distanceFunc(vec3 p) { return length(p) - sphereSize; }
 
