@@ -52,7 +52,7 @@ float smoothMin(float d1, float d2, float k) {
 float distanceFunc(vec3 p) {
   float d1 = distFuncTorus(p);
   float d2 = distFuncBox(p);
-  return smoothMin(d1, d2, 12.0);
+  return smoothMin(d1, d2, 2.0);
 }
 
 vec3 getNormal(vec3 p) {
