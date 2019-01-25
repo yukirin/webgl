@@ -29,15 +29,15 @@ vec3 getRay(vec2 p) {
   return normalize(vec3(x, y, z));
 }
 
-vec3 trans(vec3 p) { return mod(p, 5.0) - 2.5; }
+vec3 trans(vec3 p) { return mod(p, 1.0) - 0.5; }
 
 float distFuncBox(vec3 p) {
-  vec3 q = abs(p);
-  return length(max(q - vec3(1.2, 0.04, 0.5), 0.0)) - 0.05;
+  vec3 q = abs(trans(p));
+  return length(max(q - vec3(0.25, 0.25, 0.25), 0.0)) - 0.05;
 }
 
 float distFuncTorus(vec3 p) {
-  vec2 t = vec2(1.0, 0.15);
+  vec2 t = vec2(1.5, 0.4);
   vec2 r = vec2(length(p.xy) - t.x, p.z);
   return length(r) - t.y;
 }
@@ -48,8 +48,8 @@ float distanceFunc(vec3 p) {
   float d1 = distFuncTorus(p);
   float d2 = distFuncBox(p);
   // return min(d1, d2);
-  // return max(d1, d2);
-  return max(-d1, d2);
+  return max(d1, d2);
+  // return max(-d1, d2);
   // return max(d1, -d2);
 }
 
@@ -78,7 +78,7 @@ void main(void) {
   float distance = 0.0;
   float rLen = 0.0;
   vec3 rPos = cPos;
-  for (int i = 0; i < 512; i++) {
+  for (int i = 0; i < 128; i++) {
     distance = distanceFunc(rPos);
     rLen += distance;
     rPos = cPos + ray * rLen;
