@@ -9,7 +9,6 @@ out vec4 outColor;
 
 const float epsilon = 1.0e-6;
 const vec3 lightDir = vec3(0.577, 0.577, 0.577);
-const float sphereSize = 1.0;
 const float PI = 3.14159265;
 const float angle = 60.0;
 const float fov = angle * 0.5 * PI / 180.0;
@@ -44,6 +43,11 @@ vec3 rotate(vec3 p, float angle, vec3 axis) {
 }
 
 vec3 trans(vec3 p) { return mod(p, 5.0) - 2.5; }
+
+float distFuncSphere(vec3 p) {
+  const float sphereSize = 1.0;
+  return length(p) - sphereSize;
+}
 
 float distFuncBox(vec3 p) {
   vec3 q = abs(p);
