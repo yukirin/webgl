@@ -13,3 +13,8 @@
 [Exponential Shaping Functions](http://www.flong.com/texts/code/shapers_exp/)  
 [Circular & Elliptical Shaping Functions](http://www.flong.com/texts/code/shapers_circ/)  
 [Bezier and Other Parametric Shaping Functions](http://www.flong.com/texts/code/shapers_bez/)  
+[Impulse](https://thebookofshaders.com/edit.php#05/impulse.frag)  
+[Cubic Pulse](https://thebookofshaders.com/edit.php#05/cubicpulse.frag)  
+[Exponential Step](https://thebookofshaders.com/edit.php#05/expstep.frag)  
+[Parabola](https://thebookofshaders.com/edit.php#05/parabola.frag)  
+[Power Curve](https://thebookofshaders.com/edit.php#05/pcurve.frag)  
