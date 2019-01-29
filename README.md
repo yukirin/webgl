@@ -19,6 +19,7 @@
 [Parabola](https://thebookofshaders.com/edit.php#05/parabola.frag)  
 [Power Curve](https://thebookofshaders.com/edit.php#05/pcurve.frag)  
 [Curves Function](https://www.flickr.com/photos/kynd/9546075099)  
+[Easing Function](https://thebookofshaders.com/edit.php#06/easing.frag)  
  
  # Tools
 [Graph Toy](http://www.iquilezles.org/apps/graphtoy/)  
