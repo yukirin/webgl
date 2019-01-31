@@ -8,6 +8,7 @@
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
+[GLSLの関数](https://masuqat.net/programming/csharp/OpenTK03-03.php)  
 
 # snippet
 [Polynomial Shaping Functions](http://www.flong.com/texts/code/shapers_poly/)  
