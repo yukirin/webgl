@@ -6,6 +6,7 @@
 [The Book of Shaders](https://thebookofshaders.com/?lan=jp)  
 [シェーダだけで世界を創る！three.jsによるレイマーチング](https://www.slideshare.net/shohosoda9/threejs-58238484)  
 [これがGPUの力！Three.jsによる“リアルタイム”なレイトレーシング](https://qiita.com/gam0022/items/03699a07e4a4b5f2d41f)  
+[Inigo Quilez Website](http://iquilezles.org/www/index.htm)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
@@ -24,6 +25,7 @@
 [Curves Function](https://www.flickr.com/photos/kynd/9546075099)  
 [Easing Function](https://thebookofshaders.com/edit.php#06/easing.frag)  
 [Square shaped shaders](https://thndl.com/square-shaped-shaders.html)  
+[Inigo Quilez dist functions](http://iquilezles.org/www/articles/distfunctions/distfunctions.htm)  
  
  # Tools
 [Graph Toy](http://www.iquilezles.org/apps/graphtoy/)  
