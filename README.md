@@ -7,6 +7,7 @@
 [シェーダだけで世界を創る！three.jsによるレイマーチング](https://www.slideshare.net/shohosoda9/threejs-58238484)  
 [これがGPUの力！Three.jsによる“リアルタイム”なレイトレーシング](https://qiita.com/gam0022/items/03699a07e4a4b5f2d41f)  
 [Inigo Quilez Website](http://iquilezles.org/www/index.htm)  
+[距離関数のfold(折りたたみ)による形状設計](https://gam0022.net/blog/2017/03/02/raymarching-fold/)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
