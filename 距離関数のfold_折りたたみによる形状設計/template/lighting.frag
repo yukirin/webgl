@@ -166,10 +166,6 @@ float distTube(const in vec2 p, const in float width, const in float interval) {
 
 float distanceFunc(in vec3 p) {
   float dsp = distFuncSphere(p.yzx, 1.0);
-  dsp = opOnion(dsp, 0.1);
-  // cut it all in half so we can see the interiors
-  dsp = max(dsp, p.y);
-
   float df = distFuncFloor(p);
   return min(df, dsp);
 }
