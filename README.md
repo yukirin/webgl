@@ -8,6 +8,9 @@
 [これがGPUの力！Three.jsによる“リアルタイム”なレイトレーシング](https://qiita.com/gam0022/items/03699a07e4a4b5f2d41f)  
 [Inigo Quilez Website](http://iquilezles.org/www/index.htm)  
 [距離関数のfold(折りたたみ)による形状設計](https://gam0022.net/blog/2017/03/02/raymarching-fold/)  
+[パーリンノイズを理解する](https://postd.cc/understanding-perlin-noise/)  
+[レイマーチングでHeight Map Distance Field](https://qiita.com/edo_m18/items/af7fa86541634b59466f)  
+[GLSLのレイマーチングで地形を描画する](https://qiita.com/aa_debdeb/items/2b73848b019fcca70668)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
