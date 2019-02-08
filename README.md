@@ -30,6 +30,7 @@
 [Easing Function](https://thebookofshaders.com/edit.php#06/easing.frag)  
 [Square shaped shaders](https://thndl.com/square-shaped-shaders.html)  
 [Inigo Quilez dist functions](http://iquilezles.org/www/articles/distfunctions/distfunctions.htm)  
+[From random number to texture - GLSL noise functions](http://www.science-and-fiction.org/rendering/noise.html#random_numbers)  
  
  # Tools
 [Graph Toy](http://www.iquilezles.org/apps/graphtoy/)  
