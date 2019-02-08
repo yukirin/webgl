@@ -11,6 +11,8 @@
 [パーリンノイズを理解する](https://postd.cc/understanding-perlin-noise/)  
 [レイマーチングでHeight Map Distance Field](https://qiita.com/edo_m18/items/af7fa86541634b59466f)  
 [GLSLのレイマーチングで地形を描画する](https://qiita.com/aa_debdeb/items/2b73848b019fcca70668)  
+[Curl Noise書いてみた](https://qiita.com/nyamadandan/items/2a8bc7a3639e7b5ce9c9)  
+[UnityのCompute ShaderでCurl Noiseを実装（流体編）](http://edom18.hateblo.jp/entry/2018/01/18/081750)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
