@@ -217,7 +217,6 @@ vec3 getRayColor(const in vec3 origin, const in vec3 ray, out vec3 rPos, out vec
   vec3 cloudColor = vec3(0.0);
   vec3 baseColor1 = vec3(1.1, 1.05, 1.0);
   vec3 baseColor2 = vec3(0.3, 0.3, 0.2);
-  vec3 skyColor = vec3(0.05, 0.2, 0.5);
 
   rPos = origin;
   hit = false;
