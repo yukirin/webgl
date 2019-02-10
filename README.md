@@ -16,10 +16,17 @@
 [レイマーチングで潜れる雲を作る](https://qiita.com/archeleeds/items/d99283212525eff182fc)  
 [Unity でボリュームレンダリングをしてみる - vol.1 データ表示](http://tips.hecomi.com/entry/2018/01/05/192332)  
 [もっと綺麗で写実的な絵作りがしたい！レイマーチング向けのシェーディング技術](https://speakerdeck.com/gam0022/motutoqi-li-dexie-shi-de-nahui-zuo-rigasitai-reimatinguxiang-kefalsesiedeinguji-shu)  
+[デモシーンへようこそ](https://onedrive.live.com/view.aspx?resid=61562C8AE88D716B!4355)  
+[デモシーンへようこそ2](https://docs.google.com/presentation/d/1j4t4mcLw8F1PfqvKP3P8meMJ5dWfDXkfb9lc63qOFVM/edit#slide=id.g2460f5a976_0_0)  
+[2017年度GLSLお役立ちシート](https://qiita.com/7CIT/items/b73ed02569ed402627ad)  
+[raymarching for games](http://i-saint.hatenablog.com/entry/2013/08/20/003046)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
 [GLSLの関数](https://masuqat.net/programming/csharp/OpenTK03-03.php)  
+[Shadertoy](https://www.shadertoy.com/)  
+[GLSL Sandbox](http://glslsandbox.com/)  
+[vertexshaderart.com](https://www.vertexshaderart.com/)  
 
 # snippet
 [Polynomial Shaping Functions](http://www.flong.com/texts/code/shapers_poly/)  
