@@ -16,76 +16,58 @@ const float OFFSET = 1.0e-2;
 
 vec2 normalizeSCreenCoord();
 vec2 normalizeMousePosition(vec2 mousePos);
+vec3 rgb2hsv(const in vec3 c);
+vec3 hsv2rgb(const in vec3 c);
+vec4 minVec4(const in vec4 a, const in vec4 b);
+float checkeredPattern(const in vec3 p);
 
 mat3 getCamRot(const in vec3 cPos);
 vec3 getRay(vec2 p);
+vec3 rotate(vec3 p, float angle, vec3 axis);
+vec3 onRep(const in vec3 p, const in float interval);
+vec2 onRep(const in vec2 p, const in float interval);
 vec3 getNormal(vec3 p);
 float genShadow(vec3 p, vec3 light);
 float smoothMin(float d1, float d2, float k);
 float distanceFunc(in vec3 p);
+vec4 sceneColor(in vec3 p);
 vec3 getRayColor(const in vec3 origin, const in vec3 ray, out vec3 p, out vec3 normal, out bool hit);
-float distFuncFloor(const in vec3 p, const in vec4 n);
-float random(const vec2 st);
-float fade(const in float t);
-float grad(const in vec2 pi, const in float xf, const in float yf);
-float perlinNoise(in vec2 p);
-float fbm(in vec2 st);
 
-float random(const in vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123); }
+float distFuncSphere(vec3 p, const in float radius);
+float distFuncBox(vec3 p, const in vec3 size);
+float distFuncTorus(vec3 p, vec2 t);
+float distFuncCylinder(vec3 p, vec2 r);
+float distFuncFloor(vec3 p);
+float distBar(const in vec2 p, const in float width, const in float interval);
+float distTube(const in vec2 p, const in float width, const in float interval);
+float opDisplace(const in float dist, const in vec3 p);
+float opOnion(const in float dist, const in float thickness);
+vec3 foldX(in vec3 p);
+float distTree(in vec3 p);
 
-float fade(const in float t) { return t * t * t * (t * (t * 6. - 15.) + 10.); }
+vec4 minVec4(const in vec4 a, const in vec4 b) { return (a.a < b.a) ? a : b; }
 
-float grad(const in vec2 pi, const in float xf, const in float yf) {
-  float r = random(pi);
-  if (r < .25) {
-    return -xf;
-  } else if (r < .50) {
-    return yf;
-  } else if (r < .75) {
-    return xf;
-  } else {
-    return -yf;
-  }
+float checkeredPattern(const in vec3 p) {
+  float u = step(1.0, mod(p.x, 2.0));
+  float v = step(1.0, mod(p.z, 2.0));
+  return float(u == v);
 }
 
-float perlinNoise(in vec2 p) {
-  vec2 pi = floor(p);
-  float xf = fract(p.x);
-  float yf = fract(p.y);
-  float u = fade(xf);
-  float v = fade(yf);
-
-  float x0y0 = grad(pi, xf, yf);
-  float x1y0 = grad(pi + vec2(1., 0.), xf - 1., yf);
-  float x0y1 = grad(pi + vec2(0., 1.), xf, yf - 1.);
-  float x1y1 = grad(pi + vec2(1., 1.), xf - 1., yf - 1.);
-
-  float y1 = mix(x0y0, x1y0, u);
-  float y2 = mix(x0y1, x1y1, u);
-
-  return mix(y1, y2, v) * 0.5 + 0.5;
+vec3 rgb2hsv(const in vec3 c) {
+  vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+  vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+  vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+  float d = q.x - min(q.w, q.y);
+  float e = 1.0e-10;
+  return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
 }
 
-float fbm(in vec2 st) {
-  const int octaves = 5;
-  float lacunarity = 2.0;
-  float gain = 0.5;
-
-  float value = 0.0;
-  float amplitude = 0.5;
-  float frequency = 5.0;
-  float totalWeight = 0.0;
-
-  st *= frequency;
-  for (int i = 0; i < octaves; i++) {
-    value += amplitude * perlinNoise(st);
-    totalWeight += amplitude;
-    st *= lacunarity;
-    amplitude *= gain;
-  }
-
-  return value / totalWeight;
+vec3 hsv2rgb(const in vec3 c) {
+  vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
+
 // -1 <= x <= 1, -1 <= y <- 1
 vec2 normalizeSCreenCoord() { return (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y); }
 
@@ -100,6 +82,23 @@ vec3 getRay(vec2 p) {
 
   return normalize(vec3(x, y, z));
 }
+
+vec3 rotate(vec3 p, float angle, vec3 axis) {
+  // 任意軸回転行列
+  vec3 a = normalize(axis);
+  float s = sin(angle);
+  float c = cos(angle);
+  float r = 1.0 - c;
+
+  mat3 m = mat3(a.x * a.x * r + c, a.y * a.x * r + a.z * s, a.z * a.x * r - a.y * s, a.x * a.y * r - a.z * s,
+                a.y * a.y * r + c, a.z * a.y * r + a.x * s, a.x * a.z * r + a.y * s, a.y * a.z * r - a.x * s,
+                a.z * a.z * r + c);
+
+  return m * p;
+}
+
+vec3 onRep(const in vec3 p, const in float interval) { return mod(p, interval) - interval * 0.5; }
+vec2 onRep(const in vec2 p, const in float interval) { return mod(p, interval) - interval * 0.5; }
 
 float genShadow(vec3 p, vec3 light) {
   float dist = 0.0;
@@ -139,33 +138,81 @@ mat3 getCamRot(const in vec3 cPos) {
   return mat3(cSide, cUp, -cDir);
 }
 
-float distFuncFloor(const in vec3 p, const in vec4 n) { return dot(p, n.xyz) + n.w; }
+float distFuncSphere(vec3 p, const in float radius) { return length(p) - radius; }
 
-float distanceFunc(in vec3 p) {
-  float heightFactor = 2.0;
-  vec4 plane = vec4(0., 1., 0., 1.);
-  float df = distFuncFloor(p, plane);
-  float height = fbm(p.xz * .2 + time * .1) * heightFactor;
-  return df - height;
+float distFuncBox(vec3 p, const in vec3 size) {
+  vec3 q = abs(p);
+  return length(max(q - size, 0.0)) - 0.0;
 }
 
+float distFuncTorus(vec3 p, vec2 t) {
+  p.xz -= mouse * 2.0 - 1.0;
+  vec2 r = vec2(length(p.xz) - t.x, p.y);
+  return length(r) - t.y;
+}
+
+float distFuncCylinder(vec3 p, vec2 r) {
+  vec2 d = abs(vec2(length(p.xy), p.z)) - r;
+  return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - 0.1;
+}
+
+float distFuncFloor(vec3 p) { return dot(p, vec3(0.0, 1.0, 0.0)) + 1.0; }
+
+float distBar(const in vec2 p, const in float width, const in float interval) {
+  return length(max(abs(onRep(p, interval)) - width, 0.0));
+}
+
+float distTube(const in vec2 p, const in float width, const in float interval) {
+  return length(onRep(p, interval)) - width;
+}
+
+float distanceFunc(in vec3 p) {
+  float dt = distTree(p);
+  float df = distFuncFloor(p);
+  return min(dt, df);
+}
+
+float opDisplace(const in float dist, const in vec3 p) {
+  const float scale = 0.1;
+  vec3 pattern = sin(p * 20.0);
+  float displacement = pattern.x * pattern.y * pattern.z * 0.5 + 0.5;
+  return dist + displacement * scale;
+}
+
+float opOnion(const in float dist, const in float thickness) { return abs(dist) - thickness; }
+
+vec3 foldX(in vec3 p) {
+  p.x = abs(p.x);
+  return p;
+}
+
+float distTree(in vec3 p) {
+  vec3 size = vec3(0.1, 1.0, 0.1);
+  float d1 = distFuncBox(p, size);
+
+  p = foldX(p);
+  p.y -= 0.1;
+  p = rotate(p, -1.2, vec3(0.0, 0.0, -1.0));
+  float d2 = distFuncBox(p, size);
+
+  return min(d1, d2);
+}
 vec3 getRayColor(const in vec3 origin, const in vec3 ray, out vec3 rPos, out vec3 normal, out bool hit) {
   float dist = 0.0;
   float rLen = 0.0;
   rPos = origin;
-  hit = false;
-  for (int i = 0; i < 128; i++) {
+  for (int i = 0; i < 256; i++) {
     dist = distanceFunc(rPos);
     if (abs(dist) < 0.001) {
-      hit = true;
       break;
     }
     rLen += dist;
-    rPos = origin + ray * rLen * 0.6;
+    rPos = origin + ray * rLen;
   }
 
-  vec3 light = normalize(lightDir + vec3(sin(time * 0.1), 0.0, 0.0));
-  if (!hit) {
+  vec3 light = normalize(lightDir + vec3(sin(time), 0.0, 0.0));
+  if (abs(dist) >= 0.001) {
+    hit = false;
     return vec3(0.0);
   }
 
@@ -176,6 +223,7 @@ vec3 getRayColor(const in vec3 origin, const in vec3 ray, out vec3 rPos, out vec
   float spec = pow(clamp(dot(halfLE, normal), 0.0, 1.0), 50.0);
   float shadow = genShadow(rPos + normal * OFFSET, light);
 
+  hit = true;
   vec3 color = (baseColor * diff + vec3(spec)) * max(0.5, shadow);
   return color - pow(clamp(0.005 * rLen, 0.0, 0.6), 2.0);
   // return normal;
@@ -185,7 +233,7 @@ void main(void) {
   vec2 m = normalizeMousePosition(mouse);
   vec2 p = normalizeSCreenCoord();
 
-  vec3 cPos = vec3(0.0, 1.0, 4.0);
+  vec3 cPos = vec3(0.0, 2.0, 4.0);
   vec3 ray = getCamRot(cPos) * getRay(p);
   vec3 color = vec3(0.0);
   vec3 rPos, normal;
