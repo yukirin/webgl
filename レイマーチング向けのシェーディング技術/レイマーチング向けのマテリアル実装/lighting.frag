@@ -308,7 +308,6 @@ void calcRadiance(inout Intersection intersection, const in Ray ray, const in in
     return;
   }
 
-  vec3 halfLE = normalize(light + (-ray.direction));
   float diff = clamp(dot(light, intersection.normal), 0.1, 1.0);
   float spec = pow(clamp(dot(reflect(-light, intersection.normal), -ray.direction), 0.0, 1.0), 30.0);
   float shadow = genShadow(intersection.position + intersection.normal * OFFSET, light);
