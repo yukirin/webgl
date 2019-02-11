@@ -250,9 +250,9 @@ float distTree(in vec3 p) {
     vec3 q = foldX(p);
     q.y -= size.y;
     q = rotate(q, -.5, vec3(0, 0, -1));
+    size *= scale;
     d = min(d, distFuncBox(q, size));
     p = q;
-    size *= scale;
   }
 
   return d;
