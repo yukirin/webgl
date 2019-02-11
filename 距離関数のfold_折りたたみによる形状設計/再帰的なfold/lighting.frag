@@ -242,15 +242,20 @@ vec3 foldX(in vec3 p) {
 }
 
 float distTree(in vec3 p) {
-  vec3 size = vec3(0.1, 1.0, 0.1);
-  float d1 = distFuncBox(p, size);
+  const float scale = .8;
+  vec3 size = vec3(.1, 1, .1);
+  float d = distFuncBox(p, size);
 
-  p = foldX(p);
-  p.y -= 0.1;
-  p = rotate(p, -1.2, vec3(0.0, 0.0, -1.0));
-  float d2 = distFuncBox(p, size);
+  for (int i = 0; i < 7; i++) {
+    vec3 q = foldX(p);
+    q.y -= size.y;
+    q = rotate(q, -.5, vec3(0, 0, -1));
+    d = min(d, distFuncBox(q, size));
+    p = q;
+    size *= scale;
+  }
 
-  return min(d1, d2);
+  return d;
 }
 void intersectObjects(const in Ray ray, inout Intersection intersection, const in int bounce) {
   const float intersectDist = 0.001;
@@ -277,10 +282,10 @@ void intersectObjects(const in Ray ray, inout Intersection intersection, const i
   }
 
   intersection.normal = getNormal(intersection.position);
-  intersection.ambient = vec3(0.2);
-  intersection.diffuse = vec3(1., 1., 1.);
-  intersection.specular = vec3(0.8);
-  intersection.reflectance = 0.6;
+  intersection.ambient = vec3(0.1);
+  intersection.diffuse = vec3(.7, .7, .7);
+  intersection.specular = vec3(0.6);
+  intersection.reflectance = 0.5;
 
   calcRadiance(intersection, ray, bounce);
   return;
@@ -315,7 +320,8 @@ void main(void) {
   Ray ray;
   Intersection intersection;
 
-  cam.range = 6.0;
+  m = vec2(0., 1.8);  // fix camera
+  cam.range = 8.0;
   cam.fovy = 60.;
   cam.target = vec3(0., 0., 0.);
   initCam(cam, m);
