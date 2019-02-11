@@ -20,6 +20,8 @@
 [デモシーンへようこそ2](https://docs.google.com/presentation/d/1j4t4mcLw8F1PfqvKP3P8meMJ5dWfDXkfb9lc63qOFVM/edit#slide=id.g2460f5a976_0_0)  
 [2017年度GLSLお役立ちシート](https://qiita.com/7CIT/items/b73ed02569ed402627ad)  
 [raymarching for games](http://i-saint.hatenablog.com/entry/2013/08/20/003046)  
+[GLSLtech2018 レイマーチングで半歩差のつく小技集](https://www.slideshare.net/keimesuda/glsltech2018)  
+[ビルトイン関数の使い方いろいろ！シェーダーアートの表現力を高める小技集](https://docs.google.com/presentation/d/12RrqyAkFanKmfL96ZHvhDCozE-_rKFPlU1YVwej4_bc/edit#slide=id.g402b51068c_0_5)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
