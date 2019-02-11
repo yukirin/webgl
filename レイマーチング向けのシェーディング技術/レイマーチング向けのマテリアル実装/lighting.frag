@@ -315,7 +315,7 @@ void calcRadiance(inout Intersection intersection, const in Ray ray, const in in
 
   // mix
   intersection.color =
-      ((intersection.diffuse * diff + intersection.specular * spec) * max(0.5, shadow)) + intersection.ambient * ao;
+      ((intersection.diffuse * diff + intersection.specular * spec) * shadow) + intersection.ambient * ao;
 
   // fog
   intersection.color = mix(intersection.color, vec3(0.8), 1.0 - exp(-0.0001 * pow(intersection.distance, 3.0)));
