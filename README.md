@@ -22,6 +22,7 @@
 [raymarching for games](http://i-saint.hatenablog.com/entry/2013/08/20/003046)  
 [GLSLtech2018 レイマーチングで半歩差のつく小技集](https://www.slideshare.net/keimesuda/glsltech2018)  
 [ビルトイン関数の使い方いろいろ！シェーダーアートの表現力を高める小技集](https://docs.google.com/presentation/d/12RrqyAkFanKmfL96ZHvhDCozE-_rKFPlU1YVwej4_bc/edit#slide=id.g402b51068c_0_5)  
+[Distance Estimated 3D Fractals](http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
