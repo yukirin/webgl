@@ -24,6 +24,8 @@
 [ビルトイン関数の使い方いろいろ！シェーダーアートの表現力を高める小技集](https://docs.google.com/presentation/d/12RrqyAkFanKmfL96ZHvhDCozE-_rKFPlU1YVwej4_bc/edit#slide=id.g402b51068c_0_5)  
 [Distance Estimated 3D Fractals](http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/)  
 [Orbit trapを考える](http://soma.hatenablog.jp/entry/2016/04/22/131626)  
+[正規化Lambert](http://www.project-asura.com/program/d3d11/d3d11_004.html)  
+[Blinn-Phong スペキュラの正規化について](http://d.hatena.ne.jp/hanecci/20130505/p2)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
