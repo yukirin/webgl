@@ -52,3 +52,4 @@
  
  # Tools
 [Graph Toy](http://www.iquilezles.org/apps/graphtoy/)  
+[Paletta](http://paletta.mrk1869.com/)  
