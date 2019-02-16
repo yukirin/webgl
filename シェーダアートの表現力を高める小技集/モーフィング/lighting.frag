@@ -44,15 +44,30 @@ vec2 circle(vec2 p) { return vec2(length(p), .6); }
 
 vec2 square(vec2 p) { return vec2(abs(p.x) + abs(p.y), .8); }
 
+vec2 heart(vec2 p) {
+  p = p * vec2(2.1, 2.8);
+  float dist = pow(p.x, 2.) + pow(p.y - sqrt(abs(p.x)), 2.);
+
+  return vec2(dist, .9);
+}
+vec2 morphing(vec2 p) {
+  float t = time * 2.5;
+  int pair = int(floor(mod(t, 3.)));
+  float a = smoothstep(.2, .8, mod(t, 1.));
+
+  if (pair == 0) return mix(heart(p), circle(p), a);
+  if (pair == 1) return mix(circle(p), square(p), a);
+  return mix(square(p), heart(p), a);
+}
+
 void main(void) {
   vec2 m = normalizeMousePosition(mouse);
   vec2 p = normalizeSCreenCoord();
   vec3 color = vec3(0.);
 
-  float a = sin(time * 5.) * .5 + .5;
-  vec2 d = mix(circle(p), square(p), a);
+  vec2 d = morphing(p);
 
-  color += mix(vec3(1), vec3(0), step(d.x, d.y));
+  color += mix(vec3(0), vec3(1), step(d.x, d.y));
   outColor = vec4(color, 1.);
 }
 
