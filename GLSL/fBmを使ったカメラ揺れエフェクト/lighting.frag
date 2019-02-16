@@ -82,6 +82,61 @@ vec3 boxFold(in vec3 p, const in vec3 reflectSize);
 vec3 sphereFold(in vec3 p, const in float minradius, const in float fixedRadius, inout float dr);
 vec3 emit(Intersection intersection, Ray ray);
 
+float random(const in vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123); }
+
+float fade(const in float t) { return t * t * t * (t * (t * 6. - 15.) + 10.); }
+
+float grad(const in vec2 pi, const in float xf, const in float yf) {
+  float r = random(pi);
+  if (r < .25) {
+    return -xf;
+  } else if (r < .50) {
+    return yf;
+  } else if (r < .75) {
+    return xf;
+  } else {
+    return -yf;
+  }
+}
+
+float perlinNoise(in vec2 p) {
+  vec2 pi = floor(p);
+  float xf = fract(p.x);
+  float yf = fract(p.y);
+  float u = fade(xf);
+  float v = fade(yf);
+
+  float x0y0 = grad(pi, xf, yf);
+  float x1y0 = grad(pi + vec2(1., 0.), xf - 1., yf);
+  float x0y1 = grad(pi + vec2(0., 1.), xf, yf - 1.);
+  float x1y1 = grad(pi + vec2(1., 1.), xf - 1., yf - 1.);
+
+  float y1 = mix(x0y0, x1y0, u);
+  float y2 = mix(x0y1, x1y1, u);
+
+  return mix(y1, y2, v) * 0.5 + 0.5;
+}
+
+float fbm(in vec2 st) {
+  const int octaves = 5;
+  float lacunarity = 2.0;
+  float gain = 0.5;
+
+  float value = 0.0;
+  float amplitude = 0.5;
+  float frequency = 50.0;
+  float totalWeight = 0.0;
+
+  st *= frequency;
+  for (int i = 0; i < octaves; i++) {
+    value += amplitude * perlinNoise(st);
+    totalWeight += amplitude;
+    st *= lacunarity;
+    amplitude *= gain;
+  }
+
+  return value / totalWeight;
+}
 void main(void) {
   vec2 m = normalizeMousePosition(mouse);
   vec2 p = normalizeSCreenCoord();
@@ -90,10 +145,16 @@ void main(void) {
   Ray ray;
   Intersection intersection;
 
-  cam.range = 4.0;
+  vec3 offset = vec3(0);
+  offset.x = fbm(vec2(time * .1));
+  offset.y = fbm(vec2(time * .1) + vec2(31.416, -47.853));
+  offset.z = fbm(vec2(time * .1) + vec2(-233.145, -113.408));
+  offset = offset * 2. - 1.;
+
+  cam.range = 8.0;
   cam.fovy = 60.;
-  cam.target = vec3(0., 0., 0.);
-  initCam(cam, m);
+  cam.target = vec3(0., 0., -time * 2.) + offset * .5;
+  initCam(cam, offset.zx * .03);
   ray.origin = cam.pos;
   ray.direction = getRay(cam, p);
 
@@ -116,8 +177,9 @@ void main(void) {
 }
 
 float distanceFunc(in vec3 p) {
-  float ds = distFuncSphere(p, 1.);
   float df = distFuncFloor(p);
+  p.xz = onRep(p.xz, 4.);
+  float ds = distFuncSphere(p, 1.);
   return min(ds, df);
 }
 
