@@ -29,6 +29,7 @@
 [楽しい！Unityシェーダー お絵描き入門！](https://docs.google.com/presentation/d/1NMhx4HWuNZsjNRRlaFOu2ysjo04NgcpFlEhzodE8Rlg/edit#slide=id.g423da70889_217_0)  
 [2Dの小技　動くお絵かき](https://qiita.com/gaziya5/items/29a51b066cb7d24983d6)  
 [条件分岐のためにstep関数を使う時の考え方をまとめてみた](https://qiita.com/yuichiroharai/items/6e378cd128279ac9a2f0)  
+[Perlin Noise (fBm) を使ったカメラ揺れエフェクト](https://gist.github.com/keijiro/3731297)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
