@@ -55,4 +55,5 @@
  
  # Tools
 [Graph Toy](http://www.iquilezles.org/apps/graphtoy/)  
+[Desmos](https://www.desmos.com/calculator)  
 [Paletta](http://paletta.mrk1869.com/)  
