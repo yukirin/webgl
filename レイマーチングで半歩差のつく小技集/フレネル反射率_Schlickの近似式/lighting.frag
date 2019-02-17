@@ -26,7 +26,7 @@ struct Intersection {
   vec3 ambient;
   vec3 diffuse;
   vec3 specular;
-  float reflectance;
+  vec3 reflectance;
   vec3 f0;
 
   vec3 color;
@@ -101,7 +101,7 @@ void main(void) {
 
   vec3 color = vec3(0.0);
   vec3 rPos;
-  float reflection = 1.;
+  vec3 reflection = vec3(1);
   for (int i = 0; i < 4; i++) {
     intersectObjects(ray, intersection, i);
     color += reflection * intersection.color;
@@ -389,7 +389,7 @@ void intersectObjects(const in Ray ray, inout Intersection intersection, const i
   intersection.diffuse = vec3(.8, .8, .8);
   intersection.specular = vec3(0.6);
   intersection.f0 = vec3(.95, .64, .54);  // Copper
-  intersection.reflectance = .5;
+  intersection.reflectance = schlickFresnel(intersection.f0, -ray.direction, intersection.normal);
 
   calcRadiance(intersection, ray, bounce);
   return;
@@ -406,14 +406,14 @@ void calcRadiance(inout Intersection intersection, const in Ray ray, const in in
   float diff = clamp(dot(light, intersection.normal), 0.1, 1.0) * (1. / PI);
   const float specFactor = 30.0;
   const float normFactor = (specFactor + 2.) / (2. * PI);
-  vec3 f = schlickFresnel(intersection.f0, -ray.direction, intersection.normal);
   float spec = normFactor * pow(clamp(dot(reflect(-light, intersection.normal), -ray.direction), 0.0, 1.0), specFactor);
   float shadow = genShadow(intersection.position + intersection.normal * OFFSET, light);
   float ao = calcAO(intersection.position, intersection.normal);
 
   // mix
   intersection.color =
-      ((intersection.diffuse * diff + f * intersection.specular * spec) * shadow) + intersection.ambient * ao;
+      ((intersection.diffuse * diff + intersection.reflectance * intersection.specular * spec) * shadow) +
+      intersection.ambient * ao;
 
   // fog
   intersection.color = mix(intersection.color, vec3(0.8), 1.0 - exp(-0.0001 * pow(intersection.distance, 3.0)));
