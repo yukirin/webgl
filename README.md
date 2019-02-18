@@ -59,4 +59,5 @@
  # Tools
 [Graph Toy](http://www.iquilezles.org/apps/graphtoy/)  
 [Desmos](https://www.desmos.com/calculator)  
+[GLSL Grapher](https://fordhurley.com/glsl-grapher/)  
 [Paletta](http://paletta.mrk1869.com/)  
