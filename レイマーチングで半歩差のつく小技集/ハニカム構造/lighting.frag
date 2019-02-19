@@ -85,6 +85,7 @@ vec3 sphereFold(in vec3 p, const in float minradius, const in float fixedRadius,
 vec3 emit(Intersection intersection, Ray ray);
 vec3 schlickFresnel(const in vec3 f0, const in vec3 view, const in vec3 normal);
 float sdHexPrism(in vec3 p, const in vec2 h, const float r);
+float rand(vec2 st);
 
 void main(void) {
   vec2 m = normalizeMousePosition(mouse);
@@ -94,8 +95,8 @@ void main(void) {
   Ray ray;
   Intersection intersection;
 
-  m = vec2(0, .6);
-  cam.range = 4.0;
+  m = vec2(0, .4);
+  cam.range = 7.0;
   cam.fovy = 60.;
   cam.target = vec3(0., 0., 0.);
   initCam(cam, m);
@@ -122,21 +123,26 @@ void main(void) {
 }
 
 float distanceFunc(in vec3 p) {
-  float df = distFuncFloor(p);
   vec3 q = p;
+  float height = rand(vec2(floor(q.x / 2.), floor(q.z / 1.2)));
+  height += sin(time * height) * .5 + .5;
   q.z = mod(q.z, 1.2) - .6;
   q.x = mod(q.x, 2.) - 1.;
   q = rotate(q, PI * .5, vec3(1, 0, 0));
-  float ds = sdHexPrism(q, vec2(.5, .5), .1);
+  float ds = sdHexPrism(q, vec2(.5, height), .1);
 
   q = p;
   q.xz -= vec2(1., .6);
+  float height2 = rand(vec2(floor(q.z / 1.2), floor(q.x / 2.)));
+  height2 += sin(time * height2) * .5 + .5;
   q.z = mod(q.z, 1.2) - .6;
   q.x = mod(q.x, 2.) - 1.;
   q = rotate(q, PI * .5, vec3(1, 0, 0));
-  float ds2 = sdHexPrism(q, vec2(.5, .5), .1);
-  return min(min(ds, df), ds2);
+  float ds2 = sdHexPrism(q, vec2(.5, height2), .1);
+  return min(ds, ds2);
 }
+
+float rand(vec2 st) { return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453); }
 
 float sdHexPrism(in vec3 p, const in vec2 h, const in float r) {
   const vec3 k = vec3(-0.8660254, 0.5, 0.57735);
