@@ -32,6 +32,7 @@
 [Perlin Noise (fBm) を使ったカメラ揺れエフェクト](https://gist.github.com/keijiro/3731297)  
 [フレネル反射率について](http://d.hatena.ne.jp/hanecci/20130525/p3)  
 [レイマーチングで屈折表現](https://qiita.com/aa_debdeb/items/4c35f59cc6ead09c822d)  
+[領域操作関数 ハニカム構造](https://qiita.com/keim_at_si/items/856f995418192118bedc)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
@@ -55,6 +56,7 @@
 [Square shaped shaders](https://thndl.com/square-shaped-shaders.html)  
 [Inigo Quilez dist functions](http://iquilezles.org/www/articles/distfunctions/distfunctions.htm)  
 [From random number to texture - GLSL noise functions](http://www.science-and-fiction.org/rendering/noise.html#random_numbers)  
+[角丸め六角柱](https://qiita.com/keim_at_si/items/74592439e76052c4f99f)  
  
  # Tools
 [Graph Toy](http://www.iquilezles.org/apps/graphtoy/)  
