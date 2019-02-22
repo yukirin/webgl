@@ -33,6 +33,7 @@
 [フレネル反射率について](http://d.hatena.ne.jp/hanecci/20130525/p3)  
 [レイマーチングで屈折表現](https://qiita.com/aa_debdeb/items/4c35f59cc6ead09c822d)  
 [領域操作関数 ハニカム構造](https://qiita.com/keim_at_si/items/856f995418192118bedc)  
+[Unity時代の3D入門 – 第8回「 応用編 – 金属やプラスチックを表現する」](https://blog.applibot.co.jp/2017/12/07/tutorial-for-unity-3d-8/)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
