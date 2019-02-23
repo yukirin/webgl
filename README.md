@@ -34,6 +34,7 @@
 [レイマーチングで屈折表現](https://qiita.com/aa_debdeb/items/4c35f59cc6ead09c822d)  
 [領域操作関数 ハニカム構造](https://qiita.com/keim_at_si/items/856f995418192118bedc)  
 [Unity時代の3D入門 – 第8回「 応用編 – 金属やプラスチックを表現する」](https://blog.applibot.co.jp/2017/12/07/tutorial-for-unity-3d-8/)  
+[three.js + キューブマップでお手軽IBL](https://qiita.com/kaneta1992/items/df1ae53e352f6813e0cd)  
 
 # GLSL
 [GLSLについてのメモ](https://qiita.com/edo_m18/items/71f6064f3355be7e4f45)  
@@ -69,3 +70,6 @@
 [基礎からはじめる物理ベースレンダリング](https://qiita.com/mebiusbox2/items/e7063c5dfe1424e0d01a)  
 [基礎からはじめる物理ベースレンダリング（実装編）](https://qiita.com/mebiusbox2/items/8a4734ab5b0854528789)  
 [拡散BRDF](https://qiita.com/mebiusbox2/items/1cd65993ffb546822213)  
+
+#base
+[【Unity3D】リニア色空間ってなんだよ](https://soysoftware.sakura.ne.jp/archives/1347)  
