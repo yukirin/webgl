@@ -59,6 +59,7 @@
 [Inigo Quilez dist functions](http://iquilezles.org/www/articles/distfunctions/distfunctions.htm)  
 [From random number to texture - GLSL noise functions](http://www.science-and-fiction.org/rendering/noise.html#random_numbers)  
 [角丸め六角柱](https://qiita.com/keim_at_si/items/74592439e76052c4f99f)  
+[Easing Function(glslsandbox)](http://glslsandbox.com/e#44668.1)  
  
  # Tools
 [Graph Toy](http://www.iquilezles.org/apps/graphtoy/)  
