@@ -71,5 +71,5 @@
 [基礎からはじめる物理ベースレンダリング（実装編）](https://qiita.com/mebiusbox2/items/8a4734ab5b0854528789)  
 [拡散BRDF](https://qiita.com/mebiusbox2/items/1cd65993ffb546822213)  
 
-#base
+# Misc
 [【Unity3D】リニア色空間ってなんだよ](https://soysoftware.sakura.ne.jp/archives/1347)  
