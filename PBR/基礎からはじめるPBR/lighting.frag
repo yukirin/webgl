@@ -192,6 +192,11 @@ void main(void) {
     ray.direction = normalize(reflect(ray.direction, intersection.normal));
     ray.origin = intersection.position + intersection.normal * OFFSET;
 
+    // float x = random3(ray.origin);
+    // float y = random3(ray.origin.yzx + vec3(31.416, -47.853, 12.793));
+    // float z = random3(ray.origin.zxy + vec3(-233.145, -113.408, -185.31));
+    // ray.direction = normalize(ray.direction + (vec3(x, y, z) * 2. - 1.) * .4 * intersection.roughness);
+
     if (!intersection.hit) {
       break;
     }
@@ -319,7 +324,7 @@ void intersectObjects(const in Ray ray, inout Intersection intersection, const i
   if (abs(dSphereLeft(p)) < intersectDist) {
     albedo = vec3(1, .71, .29);
     metalic = 1.;
-    intersection.roughness = .9;
+    intersection.roughness = .1;
     f0 = vec3(1, .71, .29);
   } else if (abs(dSphereRight(p)) < intersectDist) {
     albedo = vec3(.15, .28, .96);
