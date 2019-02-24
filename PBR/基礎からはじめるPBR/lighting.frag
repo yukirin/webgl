@@ -90,6 +90,7 @@ float distFuncFloor(vec3 p);
 vec3 emit(Intersection intersection, Ray ray);
 vec3 schlickFresnel(const in vec3 f0, const in vec3 view, const in vec3 normal);
 vec3 fresnelSchlick(const in vec3 specular, const in vec3 h, const in vec3 v);
+vec3 fresnelSchlickRoughness(const in vec3 f0, const in float roughness, const in vec3 n, const in vec3 v);
 float dGGX(const in float a, const in float dotNH);
 float smithSchlickGGX(const in float roughness, const in float dotNV, const in float dotNL);
 vec3 cookTorrance(const in vec3 light, const in vec3 normal, const in vec3 view, const in vec3 specular,
@@ -343,7 +344,7 @@ void intersectObjects(const in Ray ray, inout Intersection intersection, const i
   intersection.normal = getNormal(intersection.position);
   intersection.diffuseColor = mix(albedo, vec3(0), metalic);
   intersection.specularColor = mix(f0, albedo, metalic);
-  intersection.reflectance = schlickFresnel(f0, -ray.direction, intersection.normal);
+  intersection.reflectance = fresnelSchlickRoughness(f0, intersection.roughness, -ray.direction, intersection.normal);
   intersection.ambient = vec3(.05);
   calcRadiance(intersection, ray, bounce);
   return;
@@ -425,3 +426,8 @@ vec4 LinearToGamma(in vec4 value, in float gammaFactor) {
   return vec4(pow(value.xyz, vec3(1. / gammaFactor)), value.w);
 }
 vec4 GammaToLinear(in vec4 value, in float gammaFactor) { return vec4(pow(value.xyz, vec3(gammaFactor)), value.w); }
+
+vec3 fresnelSchlickRoughness(const in vec3 f0, const in float roughness, const in vec3 n, const in vec3 v) {
+  float coef = max(0., dot(v, n));
+  return f0 + (max(vec3(1. - roughness), f0) - f0) * pow(1. - coef, 5.);
+}

@@ -75,8 +75,10 @@
 [PBR Theory](https://learnopengl.com/PBR/Theory)  
 [PBR Lighting](https://learnopengl.com/PBR/Lighting)  
 [PBR Diffuse IBL](https://learnopengl.com/PBR/IBL/Diffuse-irradiance)  
+[PBR Specular IBL](https://learnopengl.com/PBR/IBL/Specular-IBL)  
 
 # Misc
 [【Unity3D】リニア色空間ってなんだよ](https://soysoftware.sakura.ne.jp/archives/1347)  
 [[WebGL] HDRレンダリングの様々な実現方法の比較](https://qiita.com/YVT/items/4e7661586a6dca7e55dc)  
 [Learn OpenGL HDR](https://learnopengl.com/Advanced-Lighting/HDR)  
+[Pragmatic Physically Based Rendering : HDR](http://marcinignac.com/blog/pragmatic-pbr-hdr/)  
