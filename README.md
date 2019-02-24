@@ -74,6 +74,9 @@
 [鏡面BRDF](https://qiita.com/mebiusbox2/items/8db00cdcaf263992a5ce)  
 [PBR Theory](https://learnopengl.com/PBR/Theory)  
 [PBR Lighting](https://learnopengl.com/PBR/Lighting)  
+[PBR Diffuse IBL](https://learnopengl.com/PBR/IBL/Diffuse-irradiance)  
 
 # Misc
 [【Unity3D】リニア色空間ってなんだよ](https://soysoftware.sakura.ne.jp/archives/1347)  
+[[WebGL] HDRレンダリングの様々な実現方法の比較](https://qiita.com/YVT/items/4e7661586a6dca7e55dc)  
+[Learn OpenGL HDR](https://learnopengl.com/Advanced-Lighting/HDR)  
