@@ -7,6 +7,7 @@ uniform vec2 resolution;
 uniform float directionalLightIntensity;
 uniform float pointLightIntensity;
 uniform samplerCube cubeTexture;
+uniform samplerCube cubeEnvTexture;
 
 out vec4 outColor;
 
@@ -106,6 +107,7 @@ vec4 LinearToGamma(in vec4 value, in float gammaFactor);
 vec4 GammaToLinear(in vec4 value, in float gammaFactor);
 float checkeredPattern(const in vec3 p);
 float random3(const in vec3 co);
+vec3 tonemapReinhard(vec3 color);
 
 float random3(const in vec3 co) { return fract(sin(dot(co.xyz, vec3(12.9898, 78.233, 144.7272))) * 43758.5453); }
 
@@ -353,6 +355,9 @@ void intersectObjects(const in Ray ray, inout Intersection intersection, const i
 void calcRadiance(inout Intersection intersection, const in Ray ray, const in int bounce) {
   if (!intersection.hit) {
     intersection.color = texture(cubeTexture, ray.direction).rgb;
+    intersection.color *= 2.0;
+    intersection.color = tonemapReinhard(intersection.color);
+    intersection.color = LinearToGamma(vec4(intersection.color, 1.), GAMMAFACTOR).rgb;
     // intersection.color += emit(intersection, ray);
     return;
   }
@@ -431,3 +436,5 @@ vec3 fresnelSchlickRoughness(const in vec3 f0, const in float roughness, const i
   float coef = max(0., dot(v, n));
   return f0 + (max(vec3(1. - roughness), f0) - f0) * pow(1. - coef, 5.);
 }
+
+vec3 tonemapReinhard(vec3 color) { return color / (color + vec3(1.)); }

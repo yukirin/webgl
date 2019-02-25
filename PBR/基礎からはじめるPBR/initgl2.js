@@ -740,3 +740,38 @@ function getEV100(aperture, shutterSpeed, sensitivity) {
 function getExposure(ev100) {
   return 1.0 / (Math.pow(2.0, ev100) * 1.2);
 }
+
+function generateHdrCubeMap(source, target, isEnvDiffuse = false) {
+  let tex = gl.createTexture();
+  let counter = 0;
+
+  for (let j = 0; j < source.length; j++) {
+    let request = new XMLHttpRequest();
+    request.open('GET', source[j], true);
+    request.responseType = 'arraybuffer';
+    request.send(null);
+
+    request.onload = function(oEvent) {
+      var hdrInfo = parseHdr(request.response);
+      gl.bindTexture(gl.TEXTURE_CUBE_MAP, tex);
+      gl.texImage2D(target[j], 0, gl.RGBA32F, hdrInfo.shape[0], hdrInfo.shape[1], 0, gl.RGBA, gl.FLOAT, hdrInfo.data);
+      gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+      counter++;
+      if (counter == 6) {
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, tex);
+        gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        if (isEnvDiffuse) {
+          cubeEnvTexture = tex;
+        } else {
+          cubeTexture = tex;
+        }
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+      }
+    }
+  }
+}

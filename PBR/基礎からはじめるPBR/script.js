@@ -1,5 +1,5 @@
 let c, gl, ext, then = 0;
-let textures = [], cubeTexture = null;
+let textures = [], cubeTexture = null, cubeEnvTexture = null;
 const m = new matIV(), q = new qtnIV();
 const cameraQt = q.identity(q.create()), mousePosition = [0.5, 0.5];
 
@@ -18,10 +18,18 @@ onload = function() {
   const prg = create_program('lighting.vert', 'x-vertex', 'lighting.frag', 'x-fragment');
   const fBufferSize = 2048;
 
-  create_cube_texture(['right.jpg', 'top.jpg', 'front.jpg', 'left.jpg', 'bottom.jpg', 'back.jpg'], [
+  generateHdrCubeMap(['Ref/xp.hdr', 'Ref/yp.hdr', 'Ref/zp.hdr', 'Ref/xn.hdr', 'Ref/yn.hdr', 'Ref/zn.hdr'], [
     gl.TEXTURE_CUBE_MAP_POSITIVE_X, gl.TEXTURE_CUBE_MAP_POSITIVE_Y, gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
     gl.TEXTURE_CUBE_MAP_NEGATIVE_X, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
-  ])
+  ]);
+
+  generateHdrCubeMap(
+      ['Env/xp.hdr', 'Env/yp.hdr', 'Env/zp.hdr', 'Env/xn.hdr', 'Env/yn.hdr', 'Env/zn.hdr'],
+      [
+        gl.TEXTURE_CUBE_MAP_POSITIVE_X, gl.TEXTURE_CUBE_MAP_POSITIVE_Y, gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+        gl.TEXTURE_CUBE_MAP_NEGATIVE_X, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+      ],
+      true);
 
   const pData = plane();
   const vaos = {};
@@ -77,16 +85,18 @@ onload = function() {
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeEnvTexture);
 
     changePrgFramebuffer(prg, null, [c.width, c.height]);
     gl.bindVertexArray(vaos.plane);
     setVPMatrix(45, c.width, c.height, 0.1, 150, true);
     render(
         [1.0, 1.0, 1.0], Math.PI / 2, [1, 0, 0], [0, 0, 0], [], pData.i.length,
-        [mvpMatrix, now, mousePosition, [c.width, c.height], 0, directionalLightIntensity, pointLightIntensity],
+        [mvpMatrix, now, mousePosition, [c.width, c.height], 0, directionalLightIntensity, pointLightIntensity, 1],
         [
           'mvpMatrix,m4', 'time,f1', 'mouse,v2', 'resolution,v2', 'cubeTexture,i1', 'directionalLightIntensity,f1',
-          'pointLightIntensity,f1'
+          'pointLightIntensity,f1', 'cubeEnvTexture,i1'
         ],
         prg);
 
