@@ -70,7 +70,8 @@ struct IncidentLight {
 struct ReflectedLight {
   vec3 directDiffuse;
   vec3 directSpecular;
-  vec3 ambient;
+  vec3 indirectDiffuse;
+  vec3 indirectSpecular;
 };
 
 DirectionalLight dLight = DirectionalLight(normalize(vec3(1., 1., 1.)), vec3(1), 0.);
@@ -109,6 +110,7 @@ vec4 GammaToLinear(in vec4 value, in float gammaFactor);
 float checkeredPattern(const in vec3 p);
 float random3(const in vec3 co);
 vec3 tonemapReinhard(vec3 color);
+vec3 diffuseIBL(const in Intersection intersection);
 
 float random3(const in vec3 co) { return fract(sin(dot(co.xyz, vec3(12.9898, 78.233, 144.7272))) * 43758.5453); }
 
@@ -348,7 +350,6 @@ void intersectObjects(const in Ray ray, inout Intersection intersection, const i
   intersection.diffuseColor = mix(albedo, vec3(0), metalic);
   intersection.specularColor = mix(f0, albedo, metalic);
   intersection.reflectance = fresnelSchlickRoughness(f0, intersection.roughness, -ray.direction, intersection.normal);
-  intersection.ambient = vec3(.05);
   calcRadiance(intersection, ray, bounce);
   return;
 }
@@ -364,7 +365,7 @@ void calcRadiance(inout Intersection intersection, const in Ray ray, const in in
   }
 
   IncidentLight inLight;
-  ReflectedLight refLight = ReflectedLight(vec3(0), vec3(0), vec3(0));
+  ReflectedLight refLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
   vec3 emissive = vec3(0);
   float shadow = genShadow(intersection.position + intersection.normal * OFFSET, dLight.direction);
 
@@ -376,9 +377,9 @@ void calcRadiance(inout Intersection intersection, const in Ray ray, const in in
   inLight.color *= shadow;
   directRE(intersection, ray, inLight, refLight);
 
-  refLight.ambient =
-      intersection.diffuseColor * intersection.ambient * calcAO(intersection.position, intersection.normal);
-  intersection.color = emissive + refLight.directDiffuse + refLight.directSpecular + refLight.ambient;
+  refLight.indirectDiffuse += diffuseIBL(intersection);
+  intersection.color = emissive + refLight.directDiffuse + refLight.directSpecular + refLight.indirectDiffuse +
+                       refLight.indirectSpecular;
 
   // fog
   intersection.color = mix(intersection.color, vec3(0.7), 1.0 - exp(-0.0001 * pow(intersection.distance, 3.0)));
@@ -439,3 +440,10 @@ vec3 fresnelSchlickRoughness(const in vec3 f0, const in float roughness, const i
 }
 
 vec3 tonemapReinhard(vec3 color) { return color / (color + vec3(1.)); }
+
+vec3 diffuseIBL(const in Intersection intersection) {
+  vec3 envIrradiance = texture(cubeEnvTexture, intersection.normal).rbg * iblExposure;
+  vec3 kD = 1. - intersection.reflectance;
+  return normalizedLambert(intersection.diffuseColor) * envIrradiance * kD *
+         calcAO(intersection.position, intersection.normal);
+}
