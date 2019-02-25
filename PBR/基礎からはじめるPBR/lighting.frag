@@ -8,6 +8,7 @@ uniform float directionalLightIntensity;
 uniform float pointLightIntensity;
 uniform samplerCube cubeTexture;
 uniform samplerCube cubeEnvTexture;
+uniform float iblExposure;
 
 out vec4 outColor;
 
@@ -355,7 +356,7 @@ void intersectObjects(const in Ray ray, inout Intersection intersection, const i
 void calcRadiance(inout Intersection intersection, const in Ray ray, const in int bounce) {
   if (!intersection.hit) {
     intersection.color = texture(cubeTexture, ray.direction).rgb;
-    intersection.color *= 2.0;
+    intersection.color *= iblExposure;
     intersection.color = tonemapReinhard(intersection.color);
     intersection.color = LinearToGamma(vec4(intersection.color, 1.), GAMMAFACTOR).rgb;
     // intersection.color += emit(intersection, ray);

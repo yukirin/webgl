@@ -66,6 +66,7 @@ onload = function() {
   let pointLightLm = 3000;
   let directionalLightIntensity = directionalLightLx * exposure;        // lx [lm/m^2] * exposure
   let pointLightIntensity = (pointLightLm / Math.PI) * .25 * exposure;  // I * exposure : I [lm / sr] = lm / (4 * PI)
+  let iblExposure = 1.8;
 
   function renderFrame(now) {
     now *= 0.001;
@@ -93,10 +94,13 @@ onload = function() {
     setVPMatrix(45, c.width, c.height, 0.1, 150, true);
     render(
         [1.0, 1.0, 1.0], Math.PI / 2, [1, 0, 0], [0, 0, 0], [], pData.i.length,
-        [mvpMatrix, now, mousePosition, [c.width, c.height], 0, directionalLightIntensity, pointLightIntensity, 1],
+        [
+          mvpMatrix, now, mousePosition, [c.width, c.height], 0, directionalLightIntensity, pointLightIntensity, 1,
+          iblExposure
+        ],
         [
           'mvpMatrix,m4', 'time,f1', 'mouse,v2', 'resolution,v2', 'cubeTexture,i1', 'directionalLightIntensity,f1',
-          'pointLightIntensity,f1', 'cubeEnvTexture,i1'
+          'pointLightIntensity,f1', 'cubeEnvTexture,i1', 'iblExposure,f1'
         ],
         prg);
 
