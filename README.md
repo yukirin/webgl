@@ -77,6 +77,8 @@
 [PBR Lighting](https://learnopengl.com/PBR/Lighting)  
 [PBR Diffuse IBL](https://learnopengl.com/PBR/IBL/Diffuse-irradiance)  
 [PBR Specular IBL](https://learnopengl.com/PBR/IBL/Specular-IBL)  
+["Unreal Engine4 のリアルシェーディング" (SIGGRAPH 2013)の説明](http://d.hatena.ne.jp/hanecci/20130727/p2)  
+[超雑訳 Real Shading in Unreal Engine 4](http://project-asura.com/blog/archives/3124)  
 
 # Misc
 [【Unity3D】リニア色空間ってなんだよ](https://soysoftware.sakura.ne.jp/archives/1347)  
