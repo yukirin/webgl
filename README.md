@@ -88,3 +88,7 @@
 [[WebGL] HDRレンダリングの様々な実現方法の比較](https://qiita.com/YVT/items/4e7661586a6dca7e55dc)  
 [Learn OpenGL HDR](https://learnopengl.com/Advanced-Lighting/HDR)  
 [Pragmatic Physically Based Rendering : HDR](http://marcinignac.com/blog/pragmatic-pbr-hdr/)  
+[DDSとは](https://hexadrive.jp/hexablog/creative/4802/)  
+[Skyrimで使われるテクスチャを圧縮。DXT1、DXT3、DXT5の概要とゲームでの見え方](http://skmod.hatenablog.com/entry/ctd/textures2)  
+[DXTC(S3TC)圧縮のアルゴリズムとは？～前編～](https://www.webtech.co.jp/blog/optpix_labs/format/4013/)  
+[DXTC(S3TC)圧縮のアルゴリズムとは？～後編～](https://www.webtech.co.jp/blog/optpix_labs/format/4569/)  
