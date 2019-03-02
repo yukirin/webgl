@@ -67,6 +67,8 @@
 [GLSL Grapher](https://fordhurley.com/glsl-grapher/)  
 [Paletta](http://paletta.mrk1869.com/)  
 [HDRI spherical map to cubemap converter](https://discourse.threejs.org/t/hdri-spherical-map-to-cubemap-converter/3555)  
+[IBLBaker](https://github.com/derkreature/IBLBaker)  
+[cmftStudio](https://github.com/dariomanesku/cmftStudio)  
 
  # PBR
 [基礎からはじめる物理ベースレンダリング](https://qiita.com/mebiusbox2/items/e7063c5dfe1424e0d01a)  
