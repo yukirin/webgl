@@ -82,6 +82,7 @@
 ["Unreal Engine4 のリアルシェーディング" (SIGGRAPH 2013)の説明](http://d.hatena.ne.jp/hanecci/20130727/p2)  
 [超雑訳 Real Shading in Unreal Engine 4](http://project-asura.com/blog/archives/3124)  
 [マイクロファセットの分布関数 D(m) について](http://d.hatena.ne.jp/hanecci/20130511/p1)  
+[モバイル向け物理ベースシェーディング](https://www.unrealengine.com/ja/blog/physically-based-shading-on-mobile?sessionInvalidated=true)  
 
 # Misc
 [【Unity3D】リニア色空間ってなんだよ](https://soysoftware.sakura.ne.jp/archives/1347)  
