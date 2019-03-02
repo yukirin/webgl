@@ -91,3 +91,5 @@
 [DDSとは](https://hexadrive.jp/hexablog/creative/4802/)  
 [DXTC(S3TC)圧縮のアルゴリズムとは？～前編～](https://www.webtech.co.jp/blog/optpix_labs/format/4013/)  
 [DXTC(S3TC)圧縮のアルゴリズムとは？～後編～](https://www.webtech.co.jp/blog/optpix_labs/format/4569/)  
+[DirectX 11の圧縮フォーマットBC1～BC7について（前編）](https://www.webtech.co.jp/blog/optpix_labs/format/6993/)  
+[DirectX 11の圧縮フォーマットBC1～BC7について（後編）](https://www.webtech.co.jp/blog/optpix_labs/format/7006/)  
