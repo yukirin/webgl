@@ -91,7 +91,6 @@ float distFuncSphere(vec3 p, const in float radius);
 float distFuncBox(vec3 p, const in vec3 size);
 float distFuncFloor(vec3 p);
 vec3 emit(Intersection intersection, Ray ray);
-vec3 schlickFresnel(const in vec3 f0, const in vec3 view, const in vec3 normal);
 vec3 fresnelSchlick(const in vec3 specular, const in vec3 h, const in vec3 v);
 vec3 fresnelSchlickRoughness(const in vec3 f0, const in float roughness, const in vec3 n, const in vec3 v);
 float dGGX(const in float a, const in float dotNH);
@@ -111,6 +110,8 @@ float checkeredPattern(const in vec3 p);
 float random3(const in vec3 co);
 vec3 tonemapReinhard(vec3 color);
 vec3 diffuseIBL(const in Intersection intersection);
+vec3 specularIBL(const in Intersection ins, const in Ray ray);
+vec3 envBRDFApprox(vec3 specularColor, float roughness, float nDotv);
 
 float random3(const in vec3 co) { return fract(sin(dot(co.xyz, vec3(12.9898, 78.233, 144.7272))) * 43758.5453); }
 
@@ -190,18 +191,13 @@ void main(void) {
   vec3 color = vec3(0.0);
   vec3 rPos;
   vec3 reflection = vec3(1);
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 1; i++) {
     intersectObjects(ray, intersection, i);
     color += reflection * intersection.color;
     reflection *= intersection.reflectance;
 
     ray.direction = normalize(reflect(ray.direction, intersection.normal));
     ray.origin = intersection.position + intersection.normal * OFFSET;
-
-    // float x = random3(ray.origin);
-    // float y = random3(ray.origin.yzx + vec3(31.416, -47.853, 12.793));
-    // float z = random3(ray.origin.zxy + vec3(-233.145, -113.408, -185.31));
-    // ray.direction = normalize(ray.direction + (vec3(x, y, z) * 2. - 1.) * .4 * intersection.roughness);
 
     if (!intersection.hit) {
       break;
@@ -215,6 +211,7 @@ float distanceFunc(in vec3 p) {
   float ds = dSphereLeft(p);
   float ds2 = dSphereRight(p);
   float db = dGround(p);
+  return min(ds, ds2);
   return min(db, min(ds, ds2));
 }
 
@@ -335,7 +332,7 @@ void intersectObjects(const in Ray ray, inout Intersection intersection, const i
   } else if (abs(dSphereRight(p)) < intersectDist) {
     albedo = vec3(.15, .28, .96);
     metalic = 0.0;
-    intersection.roughness = 0.35;
+    intersection.roughness = .35;
     f0 = vec3(.05, .05, .05);
   } else if (abs(dGround(p)) < intersectDist) {
     float pattern = clamp(checkeredPattern(intersection.position) + .2, 0., 1.);
@@ -368,6 +365,7 @@ void calcRadiance(inout Intersection intersection, const in Ray ray, const in in
   ReflectedLight refLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
   vec3 emissive = vec3(0);
   float shadow = genShadow(intersection.position + intersection.normal * OFFSET, dLight.direction);
+  float ao = calcAO(intersection.position, intersection.normal);
 
   directionalLight2Irradiance(dLight, inLight);
   inLight.color *= shadow;
@@ -378,8 +376,9 @@ void calcRadiance(inout Intersection intersection, const in Ray ray, const in in
   directRE(intersection, ray, inLight, refLight);
 
   refLight.indirectDiffuse += diffuseIBL(intersection);
-  intersection.color = emissive + refLight.directDiffuse + refLight.directSpecular + refLight.indirectDiffuse +
-                       refLight.indirectSpecular;
+  refLight.indirectSpecular += specularIBL(intersection, ray);
+  intersection.color = emissive + refLight.directDiffuse + refLight.directSpecular +
+                       (refLight.indirectDiffuse + refLight.indirectSpecular) * ao;
 
   // fog
   intersection.color = mix(intersection.color, vec3(0.7), 1.0 - exp(-0.0001 * pow(intersection.distance, 3.0)));
@@ -394,11 +393,6 @@ vec3 emit(Intersection intersection, Ray ray) {
   float k = 2.;
 
   return pLight.color * pow(dist, -k) * hide;
-}
-
-vec3 schlickFresnel(const in vec3 f0, const in vec3 view, const in vec3 normal) {
-  float coef = max(0., dot(view, normal));
-  return f0 + (1. - f0) * pow(1. - coef, 5.);
 }
 
 float dSphereLeft(vec3 p) { return distFuncSphere(p - vec3(1.5, 0, 0), 1.); }
@@ -444,6 +438,31 @@ vec3 tonemapReinhard(vec3 color) { return color / (color + vec3(1.)); }
 vec3 diffuseIBL(const in Intersection intersection) {
   vec3 envIrradiance = texture(cubeEnvTexture, intersection.normal).rbg * iblExposure;
   vec3 kD = 1. - intersection.reflectance;
-  return normalizedLambert(intersection.diffuseColor) * envIrradiance * kD *
-         calcAO(intersection.position, intersection.normal);
+  return normalizedLambert(intersection.diffuseColor) * envIrradiance * kD;
+}
+
+// https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile
+vec3 envBRDFApprox(vec3 specularColor, float roughness, float nDotv) {
+  const vec4 c0 = vec4(-1, -0.0275, -0.572, 0.022);
+  const vec4 c1 = vec4(1, 0.0425, 1.04, -0.04);
+  vec4 r = roughness * c0 + c1;
+  float a004 = min(r.x * r.x, exp2(-9.28 * nDotv)) * r.x + r.y;
+  vec2 AB = vec2(-1.04, 1.04) * a004 + r.zw;
+  return specularColor * AB.x + AB.y;
+}
+
+vec3 specularIBL(const in Intersection ins, const in Ray ray) {
+  float r = ins.roughness * ins.roughness;
+  float nDotv = max(0., dot(ins.normal, -ray.direction));
+  vec3 ref = normalize(reflect(ray.direction, ins.normal));
+
+  vec3 envSpecularColor = envBRDFApprox(ins.specularColor, r, nDotv);
+
+  vec3 envRadiance = texture(cubeTexture, ref).rgb;
+  vec3 envLodRadiance = texture(cubeEnvTexture, ref).rgb;
+  vec3 env = mix(envRadiance, envLodRadiance, clamp(r * 4., 0., 1.));
+  env = tonemapReinhard(env * iblExposure);
+  env = LinearToGamma(vec4(env, 1.), GAMMAFACTOR).rgb;
+
+  return env * envSpecularColor;
 }
